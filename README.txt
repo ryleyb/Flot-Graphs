@@ -4,7 +4,7 @@ About
 Flot is a Javascript plotting library for jQuery. Read more at the
 website:
 
-  http://code.google.com/p/flot/
+  http://flotjs.org/
 
 Take a look at the examples linked from above, they should give a good
 impression of what Flot can do and the source code of the examples is
