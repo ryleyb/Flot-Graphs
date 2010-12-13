@@ -64,6 +64,7 @@
                     tickFormatter: null, // fn: number -> string
                     labelWidth: null, // size of tick labels in pixels
                     labelHeight: null,
+                    labelVertical: false, //true will make the labels run vertically
                     tickLength: null, // size in pixels of ticks, or "full" for whole line
                     alignTicksWithAxis: null, // axis number or null for no sync
                     
@@ -798,7 +799,7 @@
                     .appendTo(placeholder);
             }
             
-            if (axis.direction == "x") {
+            if (axis.direction == "x" && !axis.options.labelVertical) {
                 // to avoid measuring the widths of the labels (it's slow), we
                 // construct fixed-size boxes and put the labels inside
                 // them, we don't need the exact figures and the
@@ -835,10 +836,17 @@
                 
                 if (labels.length > 0) {
                     dummyDiv = makeDummyDiv(labels, "");
-                    if (w == null)
-                        w = dummyDiv.children().width();
-                    if (h == null)
-                        h = dummyDiv.find("div.tickLabel").height();
+                    if (axis.direction == "x" && axis.options.labelVertical){
+                        if (h == null)
+                            h = dummyDiv.children().width();
+                        if (w == null)
+                            w = dummyDiv.find("div.tickLabel").height();
+                    } else {
+                        if (w == null)
+                            w = dummyDiv.children().width();
+                        if (h == null)
+                            h = dummyDiv.find("div.tickLabel").height();
+                    }
                     dummyDiv.remove();
                 }
             }
@@ -1601,12 +1609,21 @@
                     var pos = {}, align;
                     
                     if (axis.direction == "x") {
-                        align = "center";
+                        align = "center"
                         pos.left = Math.round(plotOffset.left + axis.p2c(tick.v) - axis.labelWidth/2);
-                        if (axis.position == "bottom")
-                            pos.top = box.top + box.padding;
-                        else
-                            pos.bottom = canvasHeight - (box.top + box.height - box.padding);
+                        //basic problem with these rotations between IE and CSS3 is that
+                        //IE rotates around some magic axis instead of around a particular origin
+                        if (axis.options.labelVertical)
+                            pos.left += ($.browser.msie?0:axis.labelWidth); 
+                        if (axis.position == "bottom"){
+                            pos.top = box.top + box.padding; 
+                            if (axis.options.labelVertical)
+                                align = "left";
+                        } else {
+                            pos.bottom = canvasHeight - ((axis.options.labelVertical && !$.browser.msie)?axis.labelWidth:(box.top + box.height - box.padding));
+                            if (axis.options.labelVertical)
+                                align = "right";
+                        }
                     }
                     else {
                         pos.top = Math.round(plotOffset.top + axis.p2c(tick.v) - axis.labelHeight/2);
@@ -1620,11 +1637,26 @@
                         }
                     }
 
-                    pos.width = axis.labelWidth;
+                    pos.width = axis.options.labelVertical?axis.labelHeight:axis.labelWidth;
 
                     var style = ["position:absolute", "text-align:" + align ];
                     for (var a in pos)
                         style.push(a + ":" + pos[a] + "px")
+
+                    if (axis.options.labelVertical){
+                        style.push("-webkit-transform:rotate(90deg)");
+                        style.push("-webkit-transform-origin: top left");
+                        style.push("-o-transform:rotate(90deg)");
+                        style.push("-o-transform-origin: top left");
+                        style.push("-moz-transform:rotate(90deg)");
+                        style.push("-moz-transform-origin: top left");
+                        style.push("filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1)");
+                        //using magic here: http://www.boogdesign.com/examples/transforms/matrix-calculator.html
+                        //style.push("-webkit-transform:  matrix(-0.00000000, -1.00000000, 1.00000000, -0.00000000, 0, 0)");
+
+                        //style.push("filter: progid:DXImageTransform.Microsoft.Matrix(M11=-0.00000000, M12=1.00000000, M21=-1.00000000, M22=-0.00000000,sizingMethod='auto expand'");
+                    }
+
                     
                     html.push('<div class="tickLabel" style="' + style.join(';') + '">' + tick.label + '</div>');
                 }
