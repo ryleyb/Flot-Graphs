@@ -21,32 +21,51 @@
                     align: 'center'
                 }}
             ];
-            $.plot($("#xbottom"), series , {
-                xaxis: {
-                    tickFormatter: function(v) {
-                        var r='';
-                        for (var i=0;i<v;i++){
-                            r+=i;
-                        }
-                        return r;
-                    },
-                    labelVertical:true
-                }
+
+            function rotateGraphs(){
+                $.plot($("#xbottom"), series , {
+                    xaxis: {
+                        tickFormatter: function(v) {
+                            var r='';
+                            for (var i=0;i<v;i++){
+                                r+=i;
+                            }
+                            return r;
+                        },
+                        labelAngle:$('#angle').val()
+                    }
+                });
+                $.plot($("#xtop"), series , {
+                    xaxis: {
+                        tickFormatter: function() {
+                            return 'Long Format is Long';
+                        },
+                        labelAngle:$('#angle').val(),
+                        position:'top'
+                    }
+                });
+            }
+            
+            $('#rotate').click(function(){
+                rotateGraphs();
             });
-            $.plot($("#xtop"), series , {
-                xaxis: {
-                    tickFormatter: function() {
-                        return 'Long Format is Long';
-                    },
-                    labelVertical: true,
-                    position:'top'
-                }
-            });
+
+            rotateGraphs();
+
         });
 
     </script>
+    <style>
+        .xAxis .tickLabel {
+            background-color:blue;
+            color:white;
+            opacity:0.5;
+            filter:alpha(opacity=50);
+        }
+    </style>
 </head>
 <body>
+Angle: <input type="text" value="-90" id="angle"> <input type="button" id="rotate" value="rotate">
 <div id="xbottom" style="background-color:lightblue;width:600px;height:300px"></div>
 <br><br>
 <div id="xtop" style="background-color:lightblue;width:600px;height:300px"></div>

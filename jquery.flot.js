@@ -64,7 +64,7 @@
                     tickFormatter: null, // fn: number -> string
                     labelWidth: null, // size of tick labels in pixels
                     labelHeight: null,
-                    labelVertical: false, //true will make the labels run vertically
+                    labelAngle: 0, // an angle from 0 to -90 (only handles negative angles)
                     tickLength: null, // size in pixels of ticks, or "full" for whole line
                     alignTicksWithAxis: null, // axis number or null for no sync
                     
@@ -785,6 +785,41 @@
             }
         }
 
+        function calculateRotatedDimensions(width,height,angle){
+            if (!angle)
+                return {};
+            var rad = angle * Math.PI / 180,
+                sin   = Math.sin(rad),
+                cos   = Math.cos(rad);
+
+            var x1 = cos * width,
+                y1 = sin * width;
+            var x2 = -sin * height,
+                y2 = cos * height;
+            var x3 = cos * width - sin * height,
+                y3 = sin * width + cos * height;
+            var minX = Math.min(0, x1, x2, x3),
+                maxX = Math.max(0, x1, x2, x3),
+                minY = Math.min(0, y1, y2, y3),
+                maxY = Math.max(0, y1, y2, y3);
+            //next figure out the x,y locations of certain points on the rotated
+            //rectangle
+            //specifically, if our rectangle is defined by (0 ,0 ),(w,0 ),(w ,h ),(h ,0 )
+            //for negative angles:
+            //  -we need to know where (h',0'), as it is the left-most point
+            //  -we need to know where (h/2',0') is , for center alignment
+            //  -and the same for the right side - (w',0') and (w',h/2')
+            var aligned_left = { x: -height/2 * sin, y: -height/2 * cos};
+            var aligned_right = {x: (width*cos - height/2*sin), y: (width*sin + height/2*cos)};//(w',h/2')
+            var leftmost = { x: x2, y:y2 };//(x4',y4')
+            var rightmost = { x: x1, y:y1};//(w',0')
+
+            return { width: (maxX-minX), height: (maxY - minY), 
+                     a_left:aligned_left, a_right:aligned_right,
+                     leftmost:leftmost,rightmost:rightmost
+                   };
+        }
+
         function measureTickLabels(axis) {
             if (!axis)
                 return;
@@ -799,7 +834,7 @@
                     .appendTo(placeholder);
             }
             
-            if (axis.direction == "x" && !axis.options.labelVertical) {
+            if (axis.direction == "x" && axis.options.labelAngle == 0) {
                 // to avoid measuring the widths of the labels (it's slow), we
                 // construct fixed-size boxes and put the labels inside
                 // them, we don't need the exact figures and the
@@ -836,11 +871,17 @@
                 
                 if (labels.length > 0) {
                     dummyDiv = makeDummyDiv(labels, "");
-                    if (axis.direction == "x" && axis.options.labelVertical){
+                    if (axis.direction == "x" && axis.options.labelAngle != 0){
+                        var dims = calculateRotatedDimensions(
+                                    dummyDiv.children().width(),
+                                    dummyDiv.find("div.tickLabel").height(),
+                                    axis.options.labelAngle);
+                        axis.options.origHeight = dummyDiv.find("div.tickLabel").height();
+                        axis.options.origWidth = dummyDiv.children().width();
                         if (h == null)
-                            h = dummyDiv.children().width();
+                            h = dims.height;
                         if (w == null)
-                            w = dummyDiv.find("div.tickLabel").height();
+                            w = dims.width;
                     } else {
                         if (w == null)
                             w = dummyDiv.children().width();
@@ -855,7 +896,6 @@
                 w = 0;
             if (h == null)
                 h = 0;
-            
             axis.labelWidth = w;
             axis.labelHeight = h;
         }
@@ -1591,7 +1631,30 @@
             ctx.restore();
         }
 
+
         function insertAxisLabels() {
+            var addRotateLabelStyles = function(styles,axis){
+                var b = '';
+                if ($.browser.safari || $.browser.webkit)
+                    b = 'webkit';
+                else if ($.browser.mozilla)
+                    b = 'moz';
+                else if ($.browser.opera)
+                    b = 'o';
+                //flip the angle so IE/non-IE do the same thing
+                styles.push("-"+b+"-transform:rotate("+-axis.options.labelAngle+"deg)");
+                styles.push("-"+b+"-transform-origin:top left");
+            }
+
+            if ($.browser.msie) 
+              addRotateLabelStyles = function(styles,axis) {
+                    var rad = axis.options.labelAngle * Math.PI / 180,
+                    cos = Math.cos(rad),
+                    sin = Math.sin(rad);
+                 
+                    styles.push("filter:progid:DXImageTransform.Microsoft.Matrix(M11="+cos+", M12="+sin+", M21="+(-sin)+", M22="+cos+",sizingMethod='auto expand'");
+                }
+
             placeholder.find(".tickLabels").remove();
             
             var html = ['<div class="tickLabels" style="font-size:smaller">'];
@@ -1599,6 +1662,7 @@
             var axes = getUsedAxes();
             for (var j = 0; j < axes.length; ++j) {
                 var axis = axes[j], box = axis.box;
+                var newDims = calculateRotatedDimensions(axis.options.origWidth,axis.options.origHeight,axis.options.labelAngle);
                 //debug: html.push('<div style="position:absolute;opacity:0.10;background-color:red;left:' + box.left + 'px;top:' + box.top + 'px;width:' + box.width +  'px;height:' + box.height + 'px"></div>')
                 html.push('<div class="' + axis.direction + 'Axis ' + axis.direction + axis.n + 'Axis" style="color:' + axis.options.color + '">');
                 for (var i = 0; i < axis.ticks.length; ++i) {
@@ -1609,22 +1673,30 @@
                     var pos = {}, align;
                     
                     if (axis.direction == "x") {
-                        align = "center"
-                        pos.left = Math.round(plotOffset.left + axis.p2c(tick.v) - axis.labelWidth/2);
-                        //basic problem with these rotations between IE and CSS3 is that
-                        //IE rotates around some magic axis instead of around a particular origin
-                        if (axis.options.labelVertical)
-                            pos.left += ($.browser.msie?0:axis.labelWidth); 
-                        if (axis.position == "bottom"){
-                            pos.top = box.top + box.padding; 
-                            if (axis.options.labelVertical)
-                                align = "left";
+                        align = "center";
+                        if (axis.options.labelAngle !== 0){
+                            pos.left = Math.round(plotOffset.left + axis.p2c(tick.v));
+                            if (axis.position == 'bottom'){
+                                pos.top = box.top + box.padding;
+                                if (!$.browser.msie)
+                                    pos.left += newDims.a_left.x;
+                                else
+                                    pos.left -= newDims.a_left.x;
+                            } else if (axis.position == 'top') {
+                                pos.left -= newDims.a_right.x;
+                                if (!$.browser.msie)
+                                    pos.left += newDims.leftmost.x;
+                                    
+                                pos.top = box.top; 
+                            }
                         } else {
-                            pos.bottom = canvasHeight - ((axis.options.labelVertical && !$.browser.msie)?axis.labelWidth:(box.top + box.height - box.padding));
-                            if (axis.options.labelVertical)
-                                align = "right";
+                            pos.left = Math.round(plotOffset.left + axis.p2c(tick.v) - axis.labelWidth/2);
+                            if (axis.position == "bottom")
+                                pos.top = box.top + box.padding;
+                            else
+                                pos.bottom = canvasHeight - (box.top + box.height - box.padding);
                         }
-                    }
+                    } 
                     else {
                         pos.top = Math.round(plotOffset.top + axis.p2c(tick.v) - axis.labelHeight/2);
                         if (axis.position == "left") {
@@ -1637,26 +1709,14 @@
                         }
                     }
 
-                    pos.width = axis.options.labelVertical?axis.labelHeight:axis.labelWidth;
+                    pos.width = (axis.options.labelAngle != 0)?axis.options.origWidth:axis.labelWidth;
 
                     var style = ["position:absolute", "text-align:" + align ];
                     for (var a in pos)
                         style.push(a + ":" + pos[a] + "px")
 
-                    if (axis.options.labelVertical){
-                        style.push("-webkit-transform:rotate(90deg)");
-                        style.push("-webkit-transform-origin: top left");
-                        style.push("-o-transform:rotate(90deg)");
-                        style.push("-o-transform-origin: top left");
-                        style.push("-moz-transform:rotate(90deg)");
-                        style.push("-moz-transform-origin: top left");
-                        style.push("filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1)");
-                        //using magic here: http://www.boogdesign.com/examples/transforms/matrix-calculator.html
-                        //style.push("-webkit-transform:  matrix(-0.00000000, -1.00000000, 1.00000000, -0.00000000, 0, 0)");
-
-                        //style.push("filter: progid:DXImageTransform.Microsoft.Matrix(M11=-0.00000000, M12=1.00000000, M21=-1.00000000, M22=-0.00000000,sizingMethod='auto expand'");
-                    }
-
+                    if (axis.options.labelAngle != 0)
+                        addRotateLabelStyles(style,axis);
                     
                     html.push('<div class="tickLabel" style="' + style.join(';') + '">' + tick.label + '</div>');
                 }
