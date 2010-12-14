@@ -672,9 +672,9 @@
                 }
                 
                 if (s.bars.show) {
-                	//store barLeft to prevent recalculation allowing overwrite in procDatapoints hook.
-                	if(s.bars.barLeft==undefined)
-                		s.bars.barLeft= s.bars.align == "left" ? 0 : -s.bars.barWidth/2;
+                    //store barLeft to prevent recalculation allowing overwrite in procDatapoints hook.
+                    if(s.bars.barLeft==undefined)
+                        s.bars.barLeft= s.bars.align == "left" ? 0 : -s.bars.barWidth/2;
                     // make sure we got room for the bar on the dancing floor
                     var delta = s.bars.barLeft;
                     if (s.bars.horizontal) {
