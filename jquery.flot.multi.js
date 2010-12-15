@@ -9,6 +9,8 @@ Specify multiplebars to enable this plugin:
 The stacking order is determined by the order of the data series in
 the array (later series end up to the right of the previous).
 
+NOTE: This plugin conflicts with the stack plugin
+
 */
 
 (function ($) {
