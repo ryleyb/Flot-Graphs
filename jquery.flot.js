@@ -64,7 +64,7 @@
                     tickFormatter: null, // fn: number -> string
                     labelWidth: null, // size of tick labels in pixels
                     labelHeight: null,
-                    labelAngle: 0, // an angle from 0 to -90 (only handles negative angles)
+                    labelAngle: 0, // an angle from 90 to -90 
                     tickLength: null, // size in pixels of ticks, or "full" for whole line
                     alignTicksWithAxis: null, // axis number or null for no sync
                     
@@ -802,22 +802,27 @@
                 maxX = Math.max(0, x1, x2, x3),
                 minY = Math.min(0, y1, y2, y3),
                 maxY = Math.max(0, y1, y2, y3);
+
             //next figure out the x,y locations of certain points on the rotated
             //rectangle
-            //specifically, if our rectangle is defined by (0 ,0 ),(w,0 ),(w ,h ),(h ,0 )
+            //specifically, if our rectangle is defined by (0 ,0),(w,0),(w ,-h ),(-h,0)
             //for negative angles:
-            //  -we need to know where (h',0'), as it is the left-most point
-            //  -we need to know where (h/2',0') is , for center alignment
-            //  -and the same for the right side - (w',0') and (w',h/2')
-            var aligned_left = { x: -height/2 * sin, y: -height/2 * cos};
-            var aligned_right = {x: (width*cos - height/2*sin), y: (width*sin + height/2*cos)};//(w',h/2')
-            var leftmost = { x: x2, y:y2 };//(x4',y4')
-            var rightmost = { x: x1, y:y1};//(w',0')
+            //  -we need to know where (-h',0'), as it is the left-most point
+            //  -we need to know where (-h/2',0') is , for center alignment
+            //  -and the same for the right side - (w',0') and (w',-h/2')
+            var aligned_left = { x: height/2 * sin, y: height/2 * cos};
+            var aligned_right = {x: (width*cos + height/2*sin), y: (width*sin - height/2*cos)};//(w',-h/2')
+            var topmost,bottommost;
+            if (angle < 0){
+                bottommost = { x: (width*cos + height*sin), y:(width*sin - height*cos)};//(w',-h')
+            } else {
+                topmost = { x: x1, y: y1};//(w',0)
+                bottommost = { x: height * sin, y: -height*cos};//(0',-h')
+            }
 
             return { width: (maxX-minX), height: (maxY - minY), 
                      a_left:aligned_left, a_right:aligned_right,
-                     leftmost:leftmost,rightmost:rightmost
-                   };
+                     topmost:topmost,bottommost:bottommost};
         }
 
         function measureTickLabels(axis) {
@@ -1673,23 +1678,41 @@
                     var pos = {}, align;
                     
                     if (axis.direction == "x") {
-                        align = "center";
-                        if (axis.options.labelAngle !== 0){
+                        if (axis.options.labelAngle != 0){
+                            align = "left";
                             pos.left = Math.round(plotOffset.left + axis.p2c(tick.v));
+
                             if (axis.position == 'bottom'){
                                 pos.top = box.top + box.padding;
-                                if (!$.browser.msie)
-                                    pos.left += newDims.a_left.x;
-                                else
-                                    pos.left -= newDims.a_left.x;
+                                if (axis.options.labelAngle < 0) {
+                                    if (!$.browser.msie)
+                                        pos.left -= newDims.a_left.x;
+                                    else
+                                        pos.left += newDims.a_left.x;
+                                } else {
+                                    align = "right";
+                                    pos.left -= newDims.a_right.x;
+                                    if (!$.browser.msie)
+                                        pos.top += newDims.topmost.y;
+                                }
                             } else if (axis.position == 'top') {
-                                pos.left -= newDims.a_right.x;
-                                if (!$.browser.msie)
-                                    pos.left += newDims.leftmost.x;
-                                    
+                                if (axis.options.labelAngle < 0)
+                                    align = "right";
+                                if ($.browser.msie && axis.options.labelAngle < 0){
+                                    pos.left -= (newDims.width + newDims.a_left.x);
+                                } else {
+                                    if (axis.options.labelAngle < 0)
+                                        pos.left -= newDims.a_right.x;
+                                    if (axis.options.labelAngle > 0)
+                                        pos.left -= newDims.a_left.x;
+                                }
+
                                 pos.top = box.top; 
+                                if (!$.browser.msie && axis.options.labelAngle > 0)
+                                    pos.top += box.height - box.padding + newDims.bottommost.y;
                             }
                         } else {
+                            align = "center";
                             pos.left = Math.round(plotOffset.left + axis.p2c(tick.v) - axis.labelWidth/2);
                             if (axis.position == "bottom")
                                 pos.top = box.top + box.padding;
