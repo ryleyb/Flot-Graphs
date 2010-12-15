@@ -60,6 +60,7 @@
                     min: null, // min. value to show, null means set automatically
                     max: null, // max. value to show, null means set automatically
                     autoscaleMargin: null, // margin in % to add if auto-setting min/max
+                    autoscaleMax: null, // maximum value to autoscale to
                     ticks: null, // either [1, 3] or [[1, "a"], 3] or (fn: axis info -> ticks) or app. number of ticks for auto-ticks
                     tickFormatter: null, // fn: number -> string
                     labelWidth: null, // size of tick labels in pixels
@@ -1016,6 +1017,8 @@
             else {
                 // consider autoscaling
                 var margin = opts.autoscaleMargin;
+                var margin_max = opts.autoscaleMax;
+
                 if (margin != null) {
                     if (opts.min == null) {
                         min -= delta * margin;
@@ -1026,6 +1029,7 @@
                     }
                     if (opts.max == null) {
                         max += delta * margin;
+                        max = margin_max && (max > margin_max) ? margin_max : max
                         if (max > 0 && axis.datamax != null && axis.datamax <= 0)
                             max = 0;
                     }
@@ -1344,10 +1348,15 @@
         function snapRangeToTicks(axis, ticks) {
             if (axis.options.autoscaleMargin != null && ticks.length > 0) {
                 // snap to ticks
-                if (axis.options.min == null)
+                if (axis.options.min == null) {
                     axis.min = Math.min(axis.min, ticks[0].v);
-                if (axis.options.max == null && ticks.length > 1)
+                }
+                if (axis.options.max == null && ticks.length > 1) {
                     axis.max = Math.max(axis.max, ticks[ticks.length - 1].v);
+                    if (axis.options.autoscaleMax) {
+                        axis.max = Math.min(axis.max, axis.options.autoscaleMax);
+                    }
+                }
             }
         }
       
