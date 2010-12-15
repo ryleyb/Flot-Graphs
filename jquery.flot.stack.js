@@ -29,6 +29,8 @@ Internally, the plugin modifies the datapoints in each series, adding
 an offset to the y value. For line series, extra data points are
 inserted through interpolation. If there's a second y value, it's also
 adjusted (e.g for bar charts or filled areas).
+
+NOTE: This plugin conflicts with the multi plugin
 */
 
 (function ($) {
