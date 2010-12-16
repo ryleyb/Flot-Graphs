@@ -2188,10 +2188,11 @@
             redrawTimeout = null;
         
         // returns the data item the mouse is over, or null if none is found
-        function findNearbyItem(mouseX, mouseY, seriesFilter) {
+        function findNearbyItems(mouseX, mouseY, seriesFilter) {
             var maxDistance = options.grid.mouseActiveRadius,
                 smallestDistance = maxDistance * maxDistance + 1,
-                item = null, foundPoint = false, i, j;
+                item = null, foundPoint = false, i, j,
+                nearbyItems = [];
 
             for (i = series.length - 1; i >= 0; --i) {
                 if (!seriesFilter(series[i]))
@@ -2219,6 +2220,9 @@
                             y - my > maxy || y - my < -maxy)
                             continue;
 
+                        var nearItem = [i, j / ps];
+                        nearbyItems.push(nearItem);                            
+
                         // We have to calculate distances in pixels, not in
                         // data units, because the scales of the axes may be different
                         var dx = Math.abs(axisx.p2c(x) - mouseX),
@@ -2229,7 +2233,7 @@
                         // (last generally means on top of)
                         if (dist < smallestDistance) {
                             smallestDistance = dist;
-                            item = [i, j / ps];
+                            item = nearItem;
                         }
                     }
                 }
@@ -2254,16 +2258,36 @@
                 }
             }
 
-            if (item) {
-                i = item[0];
-                j = item[1];
-                ps = series[i].datapoints.pointsize;
+           if (item) {
+                // In some cases (bars, e.g.), we may end up with no nearbyItems; populate it with
+                // item in those cases.
+                if (nearbyItems.length == 0) {
+                    nearbyItems.push(item);
+                }
                 
-                return { datapoint: series[i].datapoints.points.slice(j * ps, (j + 1) * ps),
-                         dataIndex: j,
-                         series: series[i],
+                var rv = {item: null, all: []};
+                var temp_item = null;
+                for (var k = 0; k < nearbyItems.length; k += 1) {
+                    temp_item = nearbyItems[k];
+                    i = temp_item[0];
+                    j = temp_item[1];
+                    ps = series[i].datapoints.pointsize;
+
+                    return_item = { datapoint: series[i].datapoints.points.slice(j * ps, (j + 1) * ps),
+                             dataIndex: j,
+                           series: series[i],
                          seriesIndex: i };
+
+                    if (temp_item == item) {
+                        rv.item = return_item;
+                    }
+                    else {
+                        rv.all.push(return_item);
+                    }
+                }
+                return rv;
             }
+
             
             return null;
         }
@@ -2290,7 +2314,9 @@
             pos.pageX = event.pageX;
             pos.pageY = event.pageY;
 
-            var item = findNearbyItem(canvasX, canvasY, seriesFilter);
+            var nearby_items = findNearbyItems(canvasX, canvasY, seriesFilter);
+            var item = nearby_items && nearby_items.item;
+            nearby_items = nearby_items && nearby_items.all
 
             if (item) {
                 // fill in mouse pos for any listeners out there
@@ -2311,7 +2337,7 @@
                     highlight(item.series, item.datapoint, eventname);
             }
             
-            placeholder.trigger(eventname, [ pos, item ]);
+            placeholder.trigger(eventname, [ pos, item, nearby_items ]);
         }
 
         function triggerRedrawOverlay() {

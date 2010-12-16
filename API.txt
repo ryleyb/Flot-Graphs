@@ -702,9 +702,10 @@ An example function that makes vertical stripes might look like this:
 
 If you set "clickable" to true, the plot will listen for click events
 on the plot area and fire a "plotclick" event on the placeholder with
-a position and a nearby data item object as parameters. The coordinates
-are available both in the unit of the axes (not in pixels) and in
-global screen coordinates.
+a position, the nearest data item object, and a list of all data items 
+within mouseActiveRadius as parameters. The coordinates are available 
+both in the unit of the axes (not in pixels) and in global screen 
+coordinates.
 
 Likewise, if you set "hoverable" to true, the plot will listen for
 mouse move events on the plot area and fire a "plothover" event with
@@ -717,7 +718,7 @@ You can use "plotclick" and "plothover" events like this:
 
     $.plot($("#placeholder"), [ d ], { grid: { clickable: true } });
 
-    $("#placeholder").bind("plotclick", function (event, pos, item) {
+    $("#placeholder").bind("plotclick", function (event, pos, item, nearbyItems) {
         alert("You clicked at " + pos.x + ", " + pos.y);
         // axis coordinates for other axes, if present, are in pos.x2, pos.x3, ...
         // if you need global screen coordinates, they are pos.pageX, pos.pageY
@@ -755,8 +756,10 @@ also need to listen to "mouseout" events on the placeholder div.
 
 "mouseActiveRadius" specifies how far the mouse can be from an item
 and still activate it. If there are two or more points within this
-radius, Flot chooses the closest item. For bars, the top-most bar
-(from the latest specified data series) is chosen.
+radius, Flot chooses the closest item for the 'item' parameter. For 
+bars, the top-most bar (from the latest specified data series) is chosen.
+All items within the radius will be provided to the callback in the 
+nearbyItems array.
 
 If you want to disable interactivity for a specific data series, you
 can set "hoverable" and "clickable" to false in the options for that
