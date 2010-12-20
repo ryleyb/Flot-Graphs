@@ -78,6 +78,7 @@
                 },
                 yaxis: {
                     autoscaleMargin: 0.02,
+                    labelAngle: 0, // an angle from 90 to -90 
                     position: "left" // or "right"
                 },
                 xaxes: [],
@@ -820,9 +821,10 @@
             //  -and the same for the right side - (w',0') and (w',-h/2')
             var aligned_left = { x: height/2 * sin, y: height/2 * cos};
             var aligned_right = {x: (width*cos + height/2*sin), y: (width*sin - height/2*cos)};//(w',-h/2')
-            var topmost,bottommost;
+            var topmost,bottommost,leftmost;
             if (angle < 0){
                 bottommost = { x: (width*cos + height*sin), y:(width*sin - height*cos)};//(w',-h')
+                leftmost = { x: height * sin, y: height * cos};
             } else {
                 topmost = { x: x1, y: y1};//(w',0)
                 bottommost = { x: height * sin, y: -height*cos};//(0',-h')
@@ -830,23 +832,27 @@
 
             return { width: (maxX-minX), height: (maxY - minY), 
                      a_left:aligned_left, a_right:aligned_right,
-                     topmost:topmost,bottommost:bottommost};
+                     topmost:topmost,bottommost:bottommost,
+                     leftmost:leftmost};
         }
 
         // For the given axis, determine what offsets to place the labels assuming
         // that they are angled instead of centered on the tick
-        function calculateXAxisAngledLabels(axis){
+        // for top/bottom positioned axes, this returns the fixed top and also
+        // a left offset from the tick
+        // for left/right axes, a fixed left and a top offset
+        function calculateAxisAngledLabels(axis){
             var angle = axis.options.labelAngle;
             if (angle == 0)
                 return {}; 
             var box = axis.box;
             var dims = calculateRotatedDimensions(axis.options.origWidth,axis.options.origHeight,angle);
             var align = "left";
-            var oLeft, oTop, top = undefined;
+            var oLeft, oTop, top, left;
 
             if (axis.position == 'bottom'){
                 top = box.top + box.padding;
-                if (axis.options.labelAngle < 0) {
+                if (angle < 0) {
                     if (!$.browser.msie)
                         oLeft = -dims.a_left.x;
                     else
@@ -855,26 +861,53 @@
                     align = "right";
                     oLeft = -dims.a_right.x;
                     if (!$.browser.msie)
-                        oTop = dims.topmost.y;
+                        top += dims.topmost.y;
                 }
             } else if (axis.position == 'top') {
-                if (axis.options.labelAngle < 0)
+                top = box.top; 
+                if (!$.browser.msie && angle > 0)
+                    top += box.height - box.padding + dims.bottommost.y;
+
+                if (angle < 0)
                     align = "right";
-                if ($.browser.msie && axis.options.labelAngle < 0){
+                if ($.browser.msie && angle < 0){
                     oLeft = -dims.width - dims.a_left.x;
                 } else {
-                    if (axis.options.labelAngle < 0)
+                    if (angle < 0)
                         oLeft = -dims.a_right.x;
-                    if (axis.options.labelAngle > 0)
+                    else 
                         oLeft = -dims.a_left.x;
                 }
-
-                top = box.top; 
-                if (!$.browser.msie && axis.options.labelAngle > 0)
-                    top += box.height - box.padding + dims.bottommost.y;
+            } else if (axis.position == 'left') {
+                align = "right";
+                left = box.left;
+                if (angle < 0) {
+                    oTop = dims.a_right.y;
+                    if (!$.browser.msie)
+                        left -= dims.leftmost.x;
+                } else {
+                    left += (axis.options.origWidth-dims.width);
+                    if ($.browser.msie)
+                        oTop = -dims.a_left.y;
+                    else
+                        oTop = dims.a_right.y;
+                }
+            } else if (axis.position == 'right') {
+                align = "left";
+                left = box.left + box.padding;
+                if (angle < 0) {
+                    if (!$.browser.msie)
+                        left -= dims.leftmost.x;
+                    oTop = -dims.a_left.y;
+                } else {
+                    if ($.browser.msie)
+                        oTop = -dims.height + dims.a_left.y;
+                    else
+                        oTop = -dims.a_left.y;
+                }
             }
 
-            return {top: top, oTop: oTop, oLeft: oLeft, align: align };
+            return {top: top, left: left, oTop: oTop, oLeft: oLeft, align: align };
         }
 
         function measureTickLabels(axis) {
@@ -928,7 +961,7 @@
                 
                 if (labels.length > 0) {
                     dummyDiv = makeDummyDiv(labels, "");
-                    if (axis.direction == "x" && axis.options.labelAngle != 0){
+                    if (axis.options.labelAngle != 0){
                         var dims = calculateRotatedDimensions(
                                     dummyDiv.children().width(),
                                     dummyDiv.find("div.tickLabel").height(),
@@ -1719,7 +1752,7 @@
             var axes = getUsedAxes();
             for (var j = 0; j < axes.length; ++j) {
                 var axis = axes[j], box = axis.box;
-                var angledPos = calculateXAxisAngledLabels(axis);
+                var angledPos = calculateAxisAngledLabels(axis);
                 //debug: html.push('<div style="position:absolute;opacity:0.10;background-color:red;left:' + box.left + 'px;top:' + box.top + 'px;width:' + box.width +  'px;height:' + box.height + 'px"></div>')
                 html.push('<div class="' + axis.direction + 'Axis ' + axis.direction + axis.n + 'Axis" style="color:' + axis.options.color + '">');
                 for (var i = 0; i < axis.ticks.length; ++i) {
@@ -1733,12 +1766,9 @@
                         if (axis.options.labelAngle != 0){
                             align = angledPos.align;
                             pos.left = Math.round(plotOffset.left + axis.p2c(tick.v));
-                            if (angledPos.top != undefined)
-                                pos.top = angledPos.top;
-                            if (angledPos.oTop)
-                                pos.top += angledPos.oTop;
                             if (angledPos.oLeft)
                                 pos.left += angledPos.oLeft;
+                            pos.top = angledPos.top;
                         } else {
                             align = "center";
                             pos.left = Math.round(plotOffset.left + axis.p2c(tick.v) - axis.labelWidth/2);
@@ -1749,14 +1779,22 @@
                         }
                     } 
                     else {
-                        pos.top = Math.round(plotOffset.top + axis.p2c(tick.v) - axis.labelHeight/2);
-                        if (axis.position == "left") {
-                            pos.right = canvasWidth - (box.left + box.width - box.padding)
-                            align = "right";
-                        }
-                        else {
-                            pos.left = box.left + box.padding;
-                            align = "left";
+                        if (axis.options.labelAngle != 0){
+                            align = angledPos.align;
+                            pos.top = Math.round(plotOffset.top + axis.p2c(tick.v));
+                            if (angledPos.oTop)
+                                pos.top += angledPos.oTop;
+                            pos.left = angledPos.left;
+                        } else {
+                            pos.top = Math.round(plotOffset.top + axis.p2c(tick.v) - axis.labelHeight/2);
+                            if (axis.position == "left") {
+                                pos.right = canvasWidth - (box.left + box.width - box.padding)
+                                align = "right";
+                            }
+                            else {
+                                pos.left = box.left + box.padding;
+                                align = "left";
+                            }
                         }
                     }
 

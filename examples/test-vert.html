@@ -33,6 +33,9 @@
                             return r;
                         },
                         labelAngle:$('#angle').val()
+                    }, 
+                    yaxis: {
+                        labelAngle:$('#angle').val()
                     }
                 });
                 $.plot($("#xtop"), series , {
@@ -42,6 +45,10 @@
                         },
                         labelAngle:$('#angle').val(),
                         position:'top'
+                    },
+                    yaxis: {
+                        position:'right',
+                        labelAngle:$('#angle').val()
                     }
                 });
             }
@@ -56,7 +63,7 @@
 
     </script>
     <style>
-        .xAxis .tickLabel {
+        .tickLabel {
             background-color:blue;
             color:white;
             opacity:0.5;
