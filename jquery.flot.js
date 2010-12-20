@@ -785,6 +785,14 @@
             }
         }
 
+        //in order to move the labels after they have been rotated, we need to know some
+        //things about the dimensions of it.  This is made harder by the fact that IE
+        //"fixes" the post-rotation div.  What it does is do the rotation, and then 
+        //move the result back into the original div.  All the CSS3-supporting browsers
+        //do the rotation and then flow everything else around the original element.
+        //Also, the div width and height aren't consistently changed between browsers,
+        //so we have to calculate those too (even though the *display* of them is all
+        //the same).
         function calculateRotatedDimensions(width,height,angle){
             if (!angle)
                 return {};
@@ -823,6 +831,50 @@
             return { width: (maxX-minX), height: (maxY - minY), 
                      a_left:aligned_left, a_right:aligned_right,
                      topmost:topmost,bottommost:bottommost};
+        }
+
+        // For the given axis, determine what offsets to place the labels assuming
+        // that they are angled instead of centered on the tick
+        function calculateXAxisAngledLabels(axis){
+            var angle = axis.options.labelAngle;
+            if (angle == 0)
+                return {}; 
+            var box = axis.box;
+            var dims = calculateRotatedDimensions(axis.options.origWidth,axis.options.origHeight,angle);
+            var align = "left";
+            var oLeft, oTop, top = undefined;
+
+            if (axis.position == 'bottom'){
+                top = box.top + box.padding;
+                if (axis.options.labelAngle < 0) {
+                    if (!$.browser.msie)
+                        oLeft = -dims.a_left.x;
+                    else
+                        oLeft = dims.a_left.x;
+                } else {
+                    align = "right";
+                    oLeft = -dims.a_right.x;
+                    if (!$.browser.msie)
+                        oTop = dims.topmost.y;
+                }
+            } else if (axis.position == 'top') {
+                if (axis.options.labelAngle < 0)
+                    align = "right";
+                if ($.browser.msie && axis.options.labelAngle < 0){
+                    oLeft = -dims.width - dims.a_left.x;
+                } else {
+                    if (axis.options.labelAngle < 0)
+                        oLeft = -dims.a_right.x;
+                    if (axis.options.labelAngle > 0)
+                        oLeft = -dims.a_left.x;
+                }
+
+                top = box.top; 
+                if (!$.browser.msie && axis.options.labelAngle > 0)
+                    top += box.height - box.padding + dims.bottommost.y;
+            }
+
+            return {top: top, oTop: oTop, oLeft: oLeft, align: align };
         }
 
         function measureTickLabels(axis) {
@@ -1667,7 +1719,7 @@
             var axes = getUsedAxes();
             for (var j = 0; j < axes.length; ++j) {
                 var axis = axes[j], box = axis.box;
-                var newDims = calculateRotatedDimensions(axis.options.origWidth,axis.options.origHeight,axis.options.labelAngle);
+                var angledPos = calculateXAxisAngledLabels(axis);
                 //debug: html.push('<div style="position:absolute;opacity:0.10;background-color:red;left:' + box.left + 'px;top:' + box.top + 'px;width:' + box.width +  'px;height:' + box.height + 'px"></div>')
                 html.push('<div class="' + axis.direction + 'Axis ' + axis.direction + axis.n + 'Axis" style="color:' + axis.options.color + '">');
                 for (var i = 0; i < axis.ticks.length; ++i) {
@@ -1679,38 +1731,14 @@
                     
                     if (axis.direction == "x") {
                         if (axis.options.labelAngle != 0){
-                            align = "left";
+                            align = angledPos.align;
                             pos.left = Math.round(plotOffset.left + axis.p2c(tick.v));
-
-                            if (axis.position == 'bottom'){
-                                pos.top = box.top + box.padding;
-                                if (axis.options.labelAngle < 0) {
-                                    if (!$.browser.msie)
-                                        pos.left -= newDims.a_left.x;
-                                    else
-                                        pos.left += newDims.a_left.x;
-                                } else {
-                                    align = "right";
-                                    pos.left -= newDims.a_right.x;
-                                    if (!$.browser.msie)
-                                        pos.top += newDims.topmost.y;
-                                }
-                            } else if (axis.position == 'top') {
-                                if (axis.options.labelAngle < 0)
-                                    align = "right";
-                                if ($.browser.msie && axis.options.labelAngle < 0){
-                                    pos.left -= (newDims.width + newDims.a_left.x);
-                                } else {
-                                    if (axis.options.labelAngle < 0)
-                                        pos.left -= newDims.a_right.x;
-                                    if (axis.options.labelAngle > 0)
-                                        pos.left -= newDims.a_left.x;
-                                }
-
-                                pos.top = box.top; 
-                                if (!$.browser.msie && axis.options.labelAngle > 0)
-                                    pos.top += box.height - box.padding + newDims.bottommost.y;
-                            }
+                            if (angledPos.top != undefined)
+                                pos.top = angledPos.top;
+                            if (angledPos.oTop)
+                                pos.top += angledPos.oTop;
+                            if (angledPos.oLeft)
+                                pos.left += angledPos.oLeft;
                         } else {
                             align = "center";
                             pos.left = Math.round(plotOffset.left + axis.p2c(tick.v) - axis.labelWidth/2);
