@@ -1185,15 +1185,15 @@
                     var step = tickSize * timeUnitSize[unit];
 
                     if (unit == "second")
-                        d.setUTCSeconds(floorInBase(d.getUTCSeconds(), tickSize));
+                        d.setUTCSeconds(plot.floorInBase(d.getUTCSeconds(), tickSize));
                     if (unit == "minute")
-                        d.setUTCMinutes(floorInBase(d.getUTCMinutes(), tickSize));
+                        d.setUTCMinutes(plot.floorInBase(d.getUTCMinutes(), tickSize));
                     if (unit == "hour")
-                        d.setUTCHours(floorInBase(d.getUTCHours(), tickSize));
+                        d.setUTCHours(plot.floorInBase(d.getUTCHours(), tickSize));
                     if (unit == "month")
-                        d.setUTCMonth(floorInBase(d.getUTCMonth(), tickSize));
+                        d.setUTCMonth(plot.floorInBase(d.getUTCMonth(), tickSize));
                     if (unit == "year")
-                        d.setUTCFullYear(floorInBase(d.getUTCFullYear(), tickSize));
+                        d.setUTCFullYear(plot.floorInBase(d.getUTCFullYear(), tickSize));
                     
                     // reset smaller components
                     d.setUTCMilliseconds(0);
@@ -1310,7 +1310,7 @@
                     var ticks = [];
 
                     // spew out all possible ticks
-                    var start = floorInBase(axis.min, axis.tickSize),
+                    var start = plot.floorInBase(axis.min, axis.tickSize),
                         i = 0, v = Number.NaN, prev;
                     do {
                         prev = v;
@@ -2588,7 +2588,7 @@
      * @param base <Number> 
      * @return <Number> closest multiple of base to n by floor
      */
-    function floorInBase(n, base) {
+    $.plot.floorInBase = function(n, base) {
         return base * Math.floor(n / base);
     }
     
