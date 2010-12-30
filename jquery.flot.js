@@ -231,6 +231,12 @@
             }
         }
         
+        /**
+         * Parses and given options, providing sensible defaults when an option is unspecified.
+         * Executes "processOptions" hook when complete.
+         *
+         * @param opts <Object> containing options for plot.
+         */
         function parseOptions(opts) {
             var i;
             
@@ -304,6 +310,13 @@
             processData();
         }
         
+        /**
+         * Parses data object to ensure that series data are in a consistent Object structure -
+         * 	    [{data: [[1,2], [2,3]]}]
+         *
+         * @param d <Array<Object>> containing either an Array of Arrays (e.g. [[[1,2], [2,3]]]) or
+         *      an Array of Objects (e.g [{data: [[1,2], [2,3]]}])
+         */
         function parseData(d) {
             var res = [];
             for (var i = 0; i < d.length; ++i) {
@@ -418,6 +431,12 @@
             return axes[number - 1];
         }
 
+        /**
+         * Assign default options/colors to the current series where options are invalid or
+         * unspecified. 
+         *
+         * @see #setData(<Object>)
+         */
         function fillInSeriesOptions() {
             var i;
             
@@ -520,6 +539,7 @@
                     axis.datamax = max;
             }
 
+            // Initialize all axes
             for (i = 0; i < xaxes.length; ++i)
                 initAxis(xaxes[i]);
             for (i = 0; i < yaxes.length; ++i)
@@ -700,7 +720,19 @@
             });
         }
 
+        /**
+         * Create plot canvas and overlay canvas elements (utilizing excanvas where needed),
+         * set their dimensions, append to the placeholder, and assign global canvas context
+         * variables.
+         */
         function constructCanvas() {
+
+            /**
+             * Given a width and height, return a canvas element, using excanvas where needed.
+             *
+             * @param width <Number> canvas width in pixels
+             * @param height <Number> canvas height in pixels
+             */
             function makeCanvas(width, height) {
                 var c = document.createElement('canvas');
                 c.width = width;
@@ -1153,15 +1185,15 @@
                     var step = tickSize * timeUnitSize[unit];
 
                     if (unit == "second")
-                        d.setUTCSeconds(floorInBase(d.getUTCSeconds(), tickSize));
+                        d.setUTCSeconds(plot.floorInBase(d.getUTCSeconds(), tickSize));
                     if (unit == "minute")
-                        d.setUTCMinutes(floorInBase(d.getUTCMinutes(), tickSize));
+                        d.setUTCMinutes(plot.floorInBase(d.getUTCMinutes(), tickSize));
                     if (unit == "hour")
-                        d.setUTCHours(floorInBase(d.getUTCHours(), tickSize));
+                        d.setUTCHours(plot.floorInBase(d.getUTCHours(), tickSize));
                     if (unit == "month")
-                        d.setUTCMonth(floorInBase(d.getUTCMonth(), tickSize));
+                        d.setUTCMonth(plot.floorInBase(d.getUTCMonth(), tickSize));
                     if (unit == "year")
-                        d.setUTCFullYear(floorInBase(d.getUTCFullYear(), tickSize));
+                        d.setUTCFullYear(plot.floorInBase(d.getUTCFullYear(), tickSize));
                     
                     // reset smaller components
                     d.setUTCMilliseconds(0);
@@ -1278,7 +1310,7 @@
                     var ticks = [];
 
                     // spew out all possible ticks
-                    var start = floorInBase(axis.min, axis.tickSize),
+                    var start = plot.floorInBase(axis.min, axis.tickSize),
                         i = 0, v = Number.NaN, prev;
                     do {
                         prev = v;
@@ -1386,6 +1418,10 @@
             }
         }
       
+        /**
+         * Draw the grid (if applicable) and all series, with the order depending on whether the
+         * grid should be above the series or not.
+         */
         function draw() {
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
@@ -1671,6 +1707,11 @@
             placeholder.append(html.join(""));
         }
 
+        /**
+         * Draw given series, with it's options.
+         *
+         * @param series <Object> containing series options
+         */
         function drawSeries(series) {
             if (series.lines.show)
                 drawSeriesLines(series);
@@ -2446,6 +2487,7 @@
             var x = point[0], y = point[1],
                 axisx = series.xaxis, axisy = series.yaxis;
             
+            // Don't draw highlight if point is not within axes bounds
             if (x < axisx.min || x > axisx.max || y < axisy.min || y > axisy.max)
                 return;
             
@@ -2565,8 +2607,14 @@
         return r.join("");
     };
     
-    // round to nearby lower multiple of base
-    function floorInBase(n, base) {
+    /**
+     * Floor given number, n, to nearby lower multiple of base.
+     *
+     * @param n <Number> to round
+     * @param base <Number> 
+     * @return <Number> closest multiple of base to n by floor
+     */
+    $.plot.floorInBase = function(n, base) {
         return base * Math.floor(n / base);
     }
     
