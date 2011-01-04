@@ -194,6 +194,7 @@ Customizing the axes
 
     labelWidth: null or number
     labelHeight: null or number
+    labelAngle: number
     
     tickLength: null or number
 
@@ -331,7 +332,9 @@ an example of a custom formatter:
 
 "labelWidth" and "labelHeight" specifies a fixed size of the tick
 labels in pixels. They're useful in case you need to align several
-plots.
+plots.  "labelAngle" specifies what angle the labels should be drawn
+at.  This is especially useful for x-axes where longer labels tend to
+overlap.  You can use angles between -90 and 90 degrees.
 
 "tickLength" is the length of the tick lines in pixels. By default, the
 innermost axes will have ticks that extend all across the plot, while
