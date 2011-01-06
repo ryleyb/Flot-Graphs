@@ -9,12 +9,19 @@ website:
 Take a look at the examples linked from above, they should give a good
 impression of what Flot can do and the source code of the examples is
 probably the fastest way to learn how to use Flot.
+
+Join the conversation by either joining the user list at 
+http://groups.google.com/group/flot-graphs or the developer list 
+at http://groups.google.com/group/flot-dev 
   
 
 Installation
 ------------
 
-Just include the Javascript file after you've included jQuery.
+Just include the Javascript file after you've included jQuery. There are two 
+versions to download. The master branch which is the latest stable release. 
+If you wish to use bleeding edge or contribute to the project, grab the dev 
+branch (https://github.com/ossreleasefeed/Flot-Graphs/tree/dev)
 
 Note that you need to get a version of Excanvas (e.g. the one bundled
 with Flot) which is canvas emulation on Internet Explorer. You can
