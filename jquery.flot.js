@@ -953,7 +953,7 @@
                     if (!$.browser.msie)
                         left -= dims.leftmost.x;
                 } else {
-                    left += (axis.options.origWidth-dims.width);
+                    //left += (axis.options.origWidth-dims.width);
                     if ($.browser.msie)
                         oTop = -dims.a_left.y;
                     else
@@ -1053,6 +1053,7 @@
                 w = 0;
             if (h == null)
                 h = 0;
+
             axis.labelWidth = w;
             axis.labelHeight = h;
         }
