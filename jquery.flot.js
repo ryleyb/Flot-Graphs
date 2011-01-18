@@ -910,7 +910,7 @@
         // for left/right axes, a fixed left and a top offset
         function calculateAxisAngledLabels(axis){
             var angle = axis.options.labelAngle;
-            if (angle == 0)
+            if (angle == undefined || angle == 0)
                 return {}; 
             var box = axis.box;
             var dims = calculateRotatedDimensions(axis.options.origWidth,axis.options.origHeight,angle);
