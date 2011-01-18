@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Flot Examples</title>
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"></link>
+    <link href="playground.css" rel="stylesheet" type="text/css"></link>
+    <!--[if IE]><script language="javascript" type="text/javascript" src="../../excanvas.min.js"></script><![endif]-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+    <script language="javascript" type="text/javascript" src="../../jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="../../jquery.flot.stack.js"></script>
+    <script language="javascript" type="text/javascript" src="../../jquery.flot.threshold.js"></script>
+    <script type="text/javascript" src="jquery.json.js"></script>
+    <script type="text/javascript" src="specs.js"></script>
+    <script type="text/javascript" src="playground.js"></script>
+    <script type="text/javascript" src="farbtastic.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#info').click(function(){
+                $(this).parent().next().toggle();
+            });
+            $('#draw').click(function(){
+                draw();
+            });
+        });
+    </script>
+  </head>
+  <body>
+    <table style="width:100%">
+      <tr>
+        <td valign="top"> 
+				  <h3>
+					  <a id="info" href="#">Playground info &gt;</a>
+					</h3>
+					<div style="display: none;">
+	          <p>Here you can configure a chart by changing the values in the form on the left side of the page.  Only use this in FF or Chrome, too slow/untested otherwise. </p>
+	          <p>
+	            After every change, the code to plot the chart is updated. 
+	            <br/>
+	            The checkboxes on the left indicate if you use the custom value (checked) or the default value (unchecked) of the options.
+	            <br/>
+	            To change the options of a collapsed group, you must click on its title.
+	          </p>
+	          <p>
+	            Please, report any bugs <a href="https://github.com/ossreleasefeed/Flot-Graphs/issues" target="_blank">here</a>.
+	          </p>
+	          <p>This playground is from the code present in the github dev branch.</p>
+
+	          <p>Thanks to Fabien Ménager and <a href="http://code.google.com/p/flotr/" target="_blank">flotr</a> for the Prototype version of this page</p>
+          </div>
+          <button type="button" id="draw" style="float: right;margin-top:-24px;">Draw &gt;</button>
+          <div id="tabs">
+              <ul>
+                <li><a href="#global">Global</a></li>
+              </ul>
+                <div id="configurator">
+                    <form name="global" id="global"></form>
+                </div>
+          </div>
+        </td>
+        
+        <td id="output" rowspan="2">
+          <div id="fixed">
+            <div id="container" style="width: 500px; height: 300px;"></div>
+            
+            <div id="tabs-io">
+                <ul>
+                  <li><a href="#output-code">Output</a></li>
+                </ul>
+                
+                <pre id="output-code"></pre>
+                <!--<div id="input-code">
+                  <textarea></textarea>
+                  <button type="button" onclick="input()">&lt; Get</button>
+                </div>-->
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
