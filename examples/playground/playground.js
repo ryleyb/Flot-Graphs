@@ -235,9 +235,14 @@ function inputsToSerie(form, serie){
     var els = form.elements;
     serie.label = els.label.value;
     serie.color = els.color.value?els.color.value:null;//default to nothing, which will let flot fill it
-    serie.xaxis = parseInt($(els).find('select[name="xaxis"] option:selected').val());
-    serie.yaxis = parseInt($(els).find('select[name="yaxis"] option:selected').val());
-    serie.hide = !els.show.checked;
+    var xaxis = parseInt(els.xaxis.options[els.xaxis.selectedIndex].value);
+    if (xaxis != 1)
+        serie.xaxis = xaxis;
+    var yaxis = parseInt(els.yaxis.options[els.yaxis.selectedIndex].value);
+    if (yaxis != 1)
+        serie.yaxis = yaxis;
+    if (!els.show.checked)
+        serie.hide = true;
 }
 
 //by default there is only x/y axes, allow them to add an arbitrary number of axes instead
