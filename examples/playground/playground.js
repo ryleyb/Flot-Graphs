@@ -66,6 +66,7 @@ function insertElement(object, title, name, container){
             $(wheel).show();
         }).blur(function(){
             $(wheel).hide();
+            $(this).change();
         });
     } 
     container.append(line);
@@ -112,8 +113,8 @@ function input(){
   
     buildForm(specs, $(document.forms.global));
     
-    $(document.forms.global).find('input,select,textarea').each(function(e){
-        $(e).change(draw);
+    $('input,select,textarea',document.forms.global).each(function(e){
+        $(this).change(draw);
     });
   
   buildDataForms();
@@ -312,7 +313,7 @@ function addAxisForm(form,axis,name){
     });
 
     form.find('input,select,textarea').each(function(e){
-        $(e).change(draw);
+        $(this).change(draw);
     });
 }
 
@@ -373,6 +374,7 @@ function buildDataForms(){
             $(wheel).show();
         }).blur(function(){
             $(wheel).hide();
+            $(input).change();
         });
 
         //add appropriate axes to each select
@@ -386,11 +388,11 @@ function buildDataForms(){
         buildForm(specs, formOptions);
     
         formOptions.find('input,select,textarea').each(function(i,e){
-            $(e).change(draw);
+            $(this).change(draw);
         });
         
         formSerie.find('input,select,textarea').each(function(i,e){
-            $(e).change(draw);
+            $(this).change(draw);
         });
         
         // Add the data tab
@@ -402,8 +404,8 @@ function main(){
     buildForm(specs, $(document.forms.global));
     addAxesButtons();
     
-    $(document.forms.global).find('input,select,textarea').each(function(i,e){
-        $(e).change(draw);
+    $('input,select,textarea',document.forms.global).each(function(e){
+        $(this).change(draw);
     });
 
   buildDataForms();
