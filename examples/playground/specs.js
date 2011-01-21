@@ -11,6 +11,10 @@ var specs = {
             type: Boolean,
             def: false
         },
+        shadowSize: {
+            type: Number,
+            def: 3
+        }
     },
 	legend: {
 		_options: {
@@ -84,7 +88,7 @@ var specs = {
 		},
 		autoscaleMargin: {
 			type: Number,
-			def: 0
+			def: null 
 		},
         color: {
 			type: Color,
@@ -148,7 +152,7 @@ var specs = {
 		},
 		autoscaleMargin: {
 			type: Number,
-			def: 0
+			def: 0.02
 		},
         color: {
 			type: Color,
@@ -180,10 +184,6 @@ var specs = {
         fillColor: {
 			type: Color,
 			def: '#FFFFFF'
-		},
-		fillOpacity: {
-			type: Number,
-			def: 0.4
 		}
 	},
 	lines: {
@@ -194,7 +194,7 @@ var specs = {
 		},
 		show: {
 			type: Boolean,
-			def: false
+			def: true
 		},
 		lineWidth: {
 			type: Number,
@@ -207,10 +207,6 @@ var specs = {
         fillColor: {
 			type: Color,
 			def: null
-		},
-		fillOpacity: {
-			type: Number,
-			def: 0.4
 		}
 	},
 	bars: {
@@ -238,10 +234,6 @@ var specs = {
         fillColor: {
 			type: Color,
 			def: null
-		},
-		fillOpacity: {
-			type: Number,
-			def: 0.4
 		},
         horizontal: {
             type: Boolean,
@@ -275,10 +267,6 @@ var specs = {
 		fillColor: {
 			type: Color,
 			def: null
-		},
-		fillOpacity: {
-			type: Number,
-			def: 0.6
 		},
 		explode: {
 			type: Number,
@@ -320,10 +308,6 @@ var specs = {
 			type: Color,
 			def: "#FFFFFF"
 		},
-		fillOpacity: {
-			type: Number,
-			def: 0.4
-		},
 		stroke: {
 			type: Boolean,
 			def: false
@@ -358,10 +342,6 @@ var specs = {
 			type: Boolean,
 			def: true
 		},
-		fillOpacity: {
-			type: Number,
-			def: 0.4
-		},
 		baseRadius: {
 			type: Number,
 			def: 2
@@ -384,6 +364,10 @@ var specs = {
 			type: Color,
 			def: null
 		},
+		borderColor: {
+			type: Color,
+			def: null
+		},
 		tickColor: {
 			type: Color,
 			def: '#DDDDDD'
@@ -392,10 +376,30 @@ var specs = {
 			type: Number,
 			def: 3
 		},
+		axisMargin: {
+			type: Number,
+			def: 8
+		},
+		borderWidth: {
+			type: Number,
+			def: 2
+		},
 		aboveData: {
 			type: Boolean,
 			def: false 
-		}
+		},
+		hoverable: {
+			type: Boolean,
+			def: false 
+		},
+		autoHighlight: {
+			type: Boolean,
+			def: true 
+		},
+        mouseActiveRadius: {
+			type: Number,
+			def: 10 
+        }
 	},
 	/*selection: {
 		_options: {
@@ -483,10 +487,6 @@ var specs = {
 		fillColor: {
 			type: Color,
 			def: null
-		},
-		fillOpacity: {
-			type: Number,
-			def: 0.4
 		}
 	},*/
     threshold: {
@@ -512,31 +512,31 @@ var xAxes = [ specs.xaxis ];
 var yAxes = [ specs.yaxis ];
 
 var data = [{
-	label: 'Serie 1',
+	label: 'Series 1',
 	hide: false,
 	id: 'serie-0',
     color: null,
 	data: [[0, 3.206, 3.474, 2.212, 2.698], [1, 2.698, 3.368, 2.59, 2.926], [2, 2.926, 3.328, 2.9, 3.258], [3, 3.258, 3.559, 2.802, 3.171], [4, 3.171, 4.14, 2.995, 3.473], [5, 3.473, 4.429, 3.268, 3.913], [6, 3.913, 4.745, 3.594, 3.905], [7, 3.905, 4.29, 3.273, 3.522], [8, 3.522, 3.732, 3.272, 3.62], [9, 3.62, 4.006, 2.888, 3.225], [10, 3.225, 3.774, 2.807, 3.182]]
 }, {
-	label: 'Serie 2',
+	label: 'Series 2',
 	hide: false,
 	id: 'serie-1',
     color: null,
 	data: [[0, 2.206, 4.047, 2.493, 4.023], [1, 4.023, 4.689, 3.058, 3.872], [2, 3.872, 4.371, 3.065, 3.924], [3, 3.924, 4.344, 3.042, 3.21], [4, 3.21, 3.741, 2.795, 2.855], [5, 2.855, 3.668, 2.807, 3.648], [6, 3.648, 3.713, 3.249, 3.308], [7, 3.308, 4.055, 2.389, 3.663], [8, 3.663, 4.392, 3.235, 3.592], [9, 3.592, 4.584, 2.857, 4.235], [10, 4.235, 5.128, 4.023, 4.138]]
 }, {
-	label: 'Serie 3',
+	label: 'Series 3',
 	hide: false,
 	id: 'serie-2',
     color: null,
 	data: [[0, 4.206, 3.266, 3.142, 3.146], [1, 3.146, 3.551, 2.524, 3.289], [2, 3.289, 4.288, 2.493, 2.999], [3, 2.999, 3.053, 2.211, 2.225], [4, 2.225, 2.418, 2.222, 2.242], [5, 2.242, 2.795, 1.388, 2.303], [6, 2.303, 2.846, 1.764, 2.731], [7, 2.731, 3.263, 2.098, 2.609], [8, 2.609, 2.917, 2.077, 2.735], [9, 2.735, 2.773, 2.152, 2.771], [10, 2.771, 2.849, 1.823, 2.335]]
 }, {
-	label: 'Serie 4',
+	label: 'Series 4',
 	hide: false,
 	id: 'serie-3',
     color: null,
 	data: [[0, 3.206, 3.96, 2.944, 3.77], [1, 3.77, 4.408, 3.215, 3.984], [2, 3.984, 4.466, 3.832, 4.1], [3, 4.1, 4.914, 4.073, 4.466], [4, 4.466, 4.498, 3.664, 3.862], [5, 3.862, 4.089, 3.599, 3.635], [6, 3.635, 4.331, 3.052, 4.051], [7, 4.051, 4.427, 3.503, 4.402], [8, 4.402, 4.477, 3.534, 3.753], [9, 3.753, 3.89, 2.996, 3.291], [10, 3.291, 3.679, 3.187, 3.255]]
 }, {
-	label: 'Serie 5',
+	label: 'Series 5',
 	hide: false,
 	id: 'serie-4',
     color: null,
