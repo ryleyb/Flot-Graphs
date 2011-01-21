@@ -48,6 +48,7 @@ function insertElement(object, title, name, container){
     var activator = $(document.createElement('input'));
     activator.attr('type','checkbox').css('float','left').click(function(){
         input.attr('disabled',!this.checked);
+        input.change();
         input.parent().toggleClass('active');
     });
     var line = $(document.createElement('div')).addClass('line removeable').append(activator);
