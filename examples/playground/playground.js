@@ -234,10 +234,13 @@ function inputsToSerie(form, serie){
     serie.label = els.label.value;
     serie.color = els.color.value?els.color.value:null;//default to nothing, which will let flot fill it
     var xaxis = parseInt(els.xaxis.options[els.xaxis.selectedIndex].value);
-    if (xaxis != 1)
-        serie.xaxis = xaxis;
     var yaxis = parseInt(els.yaxis.options[els.yaxis.selectedIndex].value);
-    if (yaxis != 1)
+    //only specify the axes if they were previously set (via the dropdowns)
+    //or if they are now set to 1, likely to happen if they remove an axis this
+    //series was previously using
+    if (serie.xaxis || xaxis != 1)
+        serie.xaxis = xaxis;
+    if (serie.yaxis || yaxis != 1)
         serie.yaxis = yaxis;
     if (!els.show.checked)
         serie.hide = true;
@@ -274,13 +277,18 @@ function addAxisData(form,fsX,type,axes,spec){
     $('select[name="'+type+'axis"]').append('<option value="'+index+'">'+index+'</option>');
     if (axes.length == 2){
         $(document.createElement('button')).attr('id',type+'axis-removal').appendTo(fsX).click(function(){
-            $('select[name="'+type+'axis"] option[value="'+xAxes.length+'"]').remove();
+            //find any series using this axis and flip them back to value = 1
+            $('select[name="'+type+'axis"] option[value="'+axes.length+'"]:selected').each(function(e){
+                $(this).siblings('option[value=1]').attr('selected',true);
+            });
+            $('select[name="'+type+'axis"] option[value="'+axes.length+'"]').remove();
+            $('.'+type+'axis'+axes.length).remove();
             axes.splice(axes.length-1,1);
-            $('.'+type+'axis:eq('+axes.length+')').remove();
             if (axes.length == 1)
                 $(this).remove();
             else
-                $(this).text('Remove '+type+' axis '+xAxes.length);
+                $(this).text('Remove '+type+' axis '+axes.length);
+            draw();
             return false;
         });
     }
