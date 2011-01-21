@@ -375,6 +375,9 @@ $._farbtastic = function (container, options) {
       $._farbtastic.dragging = true;
     }
 
+    if (fb.color == undefined)
+        fb.setColor('#808080');
+
     // Update the stored offset for the widget.
     fb.offset = $(container).offset();
 
@@ -510,8 +513,6 @@ $._farbtastic = function (container, options) {
   if (options.callback) {
     fb.linkTo(options.callback);
   }
-  // Set to gray.
-  fb.setColor('#808080');
 }
 
 })(jQuery);

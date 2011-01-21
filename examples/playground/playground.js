@@ -4,9 +4,6 @@
 
     TODO:
     -add more plugins (Ryley won't be doing this)
-    -handling of colors is crap, doesn't auto-update, messes up IE, etc.  farbtastic is not a winner.  
-    -oh, and it defaults to grey (see farbtastic code)... and freaks out if you default it to blank
-        which flot needs to use its default colors...
 */
 function insertElement(object, title, name, container){
     var input;
