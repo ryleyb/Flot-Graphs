@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dit="ltr">
- <head>
+ <head
     <meta charset="utf-8">
     <title>Flot Examples - Pie</title>
     <link href="layout.css" rel="stylesheet" type="text/css"></link>
@@ -270,12 +270,16 @@ $(function () {
 
 function pieHover(event, pos, obj) 
 {
+	if (!obj)
+                return;
 	percent = parseFloat(obj.series.percent).toFixed(2);
 	$("#hover").html('<span style="font-weight: bold; color: '+obj.series.color+'">'+obj.series.label+' ('+percent+'%)</span>');
 }
 
 function pieClick(event, pos, obj) 
 {
+	if (!obj)
+                return;
 	percent = parseFloat(obj.series.percent).toFixed(2);
 	alert(''+obj.series.label+': '+percent+'%');
 }

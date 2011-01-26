@@ -308,7 +308,7 @@ number of decimals to display (default is auto-detected).
 
 Alternatively, for ultimate control over how ticks are formatted you can
 provide a function to "tickFormatter". The function is passed two
-parameters, the tick value and an "axis" object with information, and
+parameters, the tick value and an axis object with information, and
 should return a string. The default formatter looks like this:
 
   function formatter(val, axis) {
@@ -946,8 +946,11 @@ Flot to keep track of its state, so be careful.
 
   - getOptions()
 
-    Gets the options for the plot, in a normalized format with default
-    values filled in.
+    Gets the options for the plot, normalized, with default values
+    filled in. You get a reference to actual values used by Flot, so
+    if you modify the values in here, Flot will use the new values.
+    If you change something, you probably have to call draw() or
+    setupGrid() or triggerRedrawOverlay() to see the change.
     
 
 Hooks
