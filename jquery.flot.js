@@ -1,11 +1,6 @@
-/* Javascript plotting library for jQuery, v. 0.6.
- *
- * Released under the MIT license by IOLA, December 2007.
- *
- */
-
-// first an inline dependency, jquery.colorhelpers.js, we inline it here
-// for convenience
+/* first an inline dependency, jquery.colorhelpers.js, we inline it here
+*  for convenience
+*/
 
 /* Plugin for jQuery for working with colors.
  * 
@@ -27,6 +22,26 @@
  */ 
 (function($){$.color={};$.color.make=function(E,D,B,C){var F={};F.r=E||0;F.g=D||0;F.b=B||0;F.a=C!=null?C:1;F.add=function(I,H){for(var G=0;G<I.length;++G){F[I.charAt(G)]+=H}return F.normalize()};F.scale=function(I,H){for(var G=0;G<I.length;++G){F[I.charAt(G)]*=H}return F.normalize()};F.toString=function(){if(F.a>=1){return"rgb("+[F.r,F.g,F.b].join(",")+")"}else{return"rgba("+[F.r,F.g,F.b,F.a].join(",")+")"}};F.normalize=function(){function G(I,J,H){return J<I?I:(J>H?H:J)}F.r=G(0,parseInt(F.r),255);F.g=G(0,parseInt(F.g),255);F.b=G(0,parseInt(F.b),255);F.a=G(0,F.a,1);return F};F.clone=function(){return $.color.make(F.r,F.b,F.g,F.a)};return F.normalize()};$.color.extract=function(C,B){var D;do{D=C.css(B).toLowerCase();if(D!=""&&D!="transparent"){break}C=C.parent()}while(!$.nodeName(C.get(0),"body"));if(D=="rgba(0, 0, 0, 0)"){D="transparent"}return $.color.parse(D)};$.color.parse=function(E){var D,B=$.color.make;if(D=/rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(E)){return B(parseInt(D[1],10),parseInt(D[2],10),parseInt(D[3],10))}if(D=/rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(E)){return B(parseInt(D[1],10),parseInt(D[2],10),parseInt(D[3],10),parseFloat(D[4]))}if(D=/rgb\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*\)/.exec(E)){return B(parseFloat(D[1])*2.55,parseFloat(D[2])*2.55,parseFloat(D[3])*2.55)}if(D=/rgba\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(E)){return B(parseFloat(D[1])*2.55,parseFloat(D[2])*2.55,parseFloat(D[3])*2.55,parseFloat(D[4]))}if(D=/#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(E)){return B(parseInt(D[1],16),parseInt(D[2],16),parseInt(D[3],16))}if(D=/#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/.exec(E)){return B(parseInt(D[1]+D[1],16),parseInt(D[2]+D[2],16),parseInt(D[3]+D[3],16))}var C=$.trim(E).toLowerCase();if(C=="transparent"){return B(255,255,255,0)}else{D=A[C];return B(D[0],D[1],D[2])}};var A={aqua:[0,255,255],azure:[240,255,255],beige:[245,245,220],black:[0,0,0],blue:[0,0,255],brown:[165,42,42],cyan:[0,255,255],darkblue:[0,0,139],darkcyan:[0,139,139],darkgrey:[169,169,169],darkgreen:[0,100,0],darkkhaki:[189,183,107],darkmagenta:[139,0,139],darkolivegreen:[85,107,47],darkorange:[255,140,0],darkorchid:[153,50,204],darkred:[139,0,0],darksalmon:[233,150,122],darkviolet:[148,0,211],fuchsia:[255,0,255],gold:[255,215,0],green:[0,128,0],indigo:[75,0,130],khaki:[240,230,140],lightblue:[173,216,230],lightcyan:[224,255,255],lightgreen:[144,238,144],lightgrey:[211,211,211],lightpink:[255,182,193],lightyellow:[255,255,224],lime:[0,255,0],magenta:[255,0,255],maroon:[128,0,0],navy:[0,0,128],olive:[128,128,0],orange:[255,165,0],pink:[255,192,203],purple:[128,0,128],violet:[128,0,128],red:[255,0,0],silver:[192,192,192],white:[255,255,255],yellow:[255,255,0]}})(jQuery);
 
+/* Javascript plotting library for jQuery, v. 0.6.
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+ */
+ 
 // the actual Flot code
 (function($) {
     function Plot(placeholder, data_, options_, plugins) {
@@ -60,10 +75,12 @@
                     min: null, // min. value to show, null means set automatically
                     max: null, // max. value to show, null means set automatically
                     autoscaleMargin: null, // margin in % to add if auto-setting min/max
+                    autoscaleMax: null, // maximum value to autoscale to
                     ticks: null, // either [1, 3] or [[1, "a"], 3] or (fn: axis info -> ticks) or app. number of ticks for auto-ticks
                     tickFormatter: null, // fn: number -> string
                     labelWidth: null, // size of tick labels in pixels
                     labelHeight: null,
+                    labelAngle: 0, // an angle from 90 to -90 
                     tickLength: null, // size in pixels of ticks, or "full" for whole line
                     alignTicksWithAxis: null, // axis number or null for no sync
                     
@@ -77,6 +94,7 @@
                 },
                 yaxis: {
                     autoscaleMargin: 0.02,
+                    labelAngle: 0, // an angle from 90 to -90 
                     position: "left" // or "right"
                 },
                 xaxes: [],
@@ -230,6 +248,12 @@
             }
         }
         
+        /**
+         * Parses and given options, providing sensible defaults when an option is unspecified.
+         * Executes "processOptions" hook when complete.
+         *
+         * @param opts <Object> containing options for plot.
+         */
         function parseOptions(opts) {
             var i;
             
@@ -303,6 +327,13 @@
             processData();
         }
         
+        /**
+         * Parses data object to ensure that series data are in a consistent Object structure -
+         * 	    [{data: [[1,2], [2,3]]}]
+         *
+         * @param d <Array<Object>> containing either an Array of Arrays (e.g. [[[1,2], [2,3]]]) or
+         *      an Array of Objects (e.g [{data: [[1,2], [2,3]]}])
+         */
         function parseData(d) {
             var res = [];
             for (var i = 0; i < d.length; ++i) {
@@ -417,6 +448,12 @@
             return axes[number - 1];
         }
 
+        /**
+         * Assign default options/colors to the current series where options are invalid or
+         * unspecified. 
+         *
+         * @see #setData(<Object>)
+         */
         function fillInSeriesOptions() {
             var i;
             
@@ -519,6 +556,7 @@
                     axis.datamax = max;
             }
 
+            // Initialize all axes
             for (i = 0; i < xaxes.length; ++i)
                 initAxis(xaxes[i]);
             for (i = 0; i < yaxes.length; ++i)
@@ -699,6 +737,11 @@
             });
         }
 
+        /**
+         * Create plot canvas and overlay canvas elements (utilizing excanvas where needed),
+         * set their dimensions, append to the placeholder, and assign global canvas context
+         * variables.
+         */
         function constructCanvas() {
             canvasWidth = placeholder.width();
             canvasHeight = placeholder.height();
@@ -801,6 +844,130 @@
             }
         }
 
+        //in order to move the labels after they have been rotated, we need to know some
+        //things about the dimensions of it.  This is made harder by the fact that IE
+        //"fixes" the post-rotation div.  What it does is do the rotation, and then 
+        //move the result back into the original div.  All the CSS3-supporting browsers
+        //do the rotation and then flow everything else around the original element.
+        //Also, the div width and height aren't consistently changed between browsers,
+        //so we have to calculate those too (even though the *display* of them is all
+        //the same).
+        function calculateRotatedDimensions(width,height,angle){
+            if (!angle)
+                return {};
+            var rad = angle * Math.PI / 180,
+                sin   = Math.sin(rad),
+                cos   = Math.cos(rad);
+
+            var x1 = cos * width,
+                y1 = sin * width;
+            var x2 = -sin * height,
+                y2 = cos * height;
+            var x3 = cos * width - sin * height,
+                y3 = sin * width + cos * height;
+            var minX = Math.min(0, x1, x2, x3),
+                maxX = Math.max(0, x1, x2, x3),
+                minY = Math.min(0, y1, y2, y3),
+                maxY = Math.max(0, y1, y2, y3);
+
+            //next figure out the x,y locations of certain points on the rotated
+            //rectangle
+            //specifically, if our rectangle is defined by (0 ,0),(w,0),(w ,-h ),(-h,0)
+            //for negative angles:
+            //  -we need to know where (-h',0'), as it is the left-most point
+            //  -we need to know where (-h/2',0') is , for center alignment
+            //  -and the same for the right side - (w',0') and (w',-h/2')
+            var aligned_left = { x: height/2 * sin, y: height/2 * cos};
+            var aligned_right = {x: (width*cos + height/2*sin), y: (width*sin - height/2*cos)};//(w',-h/2')
+            var topmost,bottommost,leftmost;
+            if (angle < 0){
+                bottommost = { x: (width*cos + height*sin), y:(width*sin - height*cos)};//(w',-h')
+                leftmost = { x: height * sin, y: height * cos};
+            } else {
+                topmost = { x: x1, y: y1};//(w',0)
+                bottommost = { x: height * sin, y: -height*cos};//(0',-h')
+            }
+
+            return { width: (maxX-minX), height: (maxY - minY), 
+                     a_left:aligned_left, a_right:aligned_right,
+                     topmost:topmost,bottommost:bottommost,
+                     leftmost:leftmost};
+        }
+
+        // For the given axis, determine what offsets to place the labels assuming
+        // that they are angled instead of centered on the tick
+        // for top/bottom positioned axes, this returns the fixed top and also
+        // a left offset from the tick
+        // for left/right axes, a fixed left and a top offset
+        function calculateAxisAngledLabels(axis){
+            var angle = axis.options.labelAngle;
+            if (angle == undefined || angle == 0)
+                return {}; 
+            var box = axis.box;
+            var dims = calculateRotatedDimensions(axis.options.origWidth,axis.options.origHeight,angle);
+            var align = "left";
+            var oLeft=0, oTop=0, top, left;
+
+            if (axis.position == 'bottom'){
+                top = box.top + box.padding;
+                if (angle < 0) {
+                    if (!$.browser.msie)
+                        oLeft = -dims.a_left.x;
+                    else
+                        oLeft = dims.a_left.x;
+                } else {
+                    align = "right";
+                    oLeft = -dims.a_right.x;
+                    if (!$.browser.msie)
+                        top += dims.topmost.y;
+                }
+            } else if (axis.position == 'top') {
+                top = box.top; 
+                if (!$.browser.msie && angle > 0)
+                    top += box.height - box.padding + dims.bottommost.y;
+
+                if (angle < 0)
+                    align = "right";
+                if ($.browser.msie && angle < 0){
+                    oLeft = -dims.width - dims.a_left.x;
+                } else {
+                    if (angle < 0)
+                        oLeft = -dims.a_right.x;
+                    else 
+                        oLeft = -dims.a_left.x;
+                }
+            } else if (axis.position == 'left') {
+                align = "right";
+                left = box.left;
+                if (angle < 0) {
+                    oTop = dims.a_right.y;
+                    if (!$.browser.msie)
+                        left -= dims.leftmost.x;
+                } else {
+                    //left += (axis.options.origWidth-dims.width);
+                    if ($.browser.msie)
+                        oTop = -dims.a_left.y;
+                    else
+                        oTop = dims.a_right.y;
+                }
+            } else if (axis.position == 'right') {
+                align = "left";
+                left = box.left + box.padding;
+                if (angle < 0) {
+                    if (!$.browser.msie)
+                        left -= dims.leftmost.x;
+                    oTop = -dims.a_left.y;
+                } else {
+                    if ($.browser.msie)
+                        oTop = -dims.height + dims.a_left.y;
+                    else
+                        oTop = -dims.a_left.y;
+                }
+            }
+
+            return {top: top, left: left, oTop: oTop, oLeft: oLeft, align: align };
+        }
+
         function measureTickLabels(axis) {
             if (!axis)
                 return;
@@ -815,7 +982,7 @@
                     .appendTo(placeholder);
             }
             
-            if (axis.direction == "x") {
+            if (axis.direction == "x" && axis.options.labelAngle == 0) {
                 // to avoid measuring the widths of the labels (it's slow), we
                 // construct fixed-size boxes and put the labels inside
                 // them, we don't need the exact figures and the
@@ -852,10 +1019,23 @@
                 
                 if (labels.length > 0) {
                     dummyDiv = makeDummyDiv(labels, "");
-                    if (w == null)
-                        w = dummyDiv.children().width();
-                    if (h == null)
-                        h = dummyDiv.find("div.tickLabel").height();
+                    if (axis.options.labelAngle != 0){
+                        var dims = calculateRotatedDimensions(
+                                    dummyDiv.children().width(),
+                                    dummyDiv.find("div.tickLabel").height(),
+                                    axis.options.labelAngle);
+                        axis.options.origHeight = dummyDiv.find("div.tickLabel").height();
+                        axis.options.origWidth = dummyDiv.children().width();
+                        if (h == null)
+                            h = dims.height;
+                        if (w == null)
+                            w = dims.width;
+                    } else {
+                        if (w == null)
+                            w = dummyDiv.children().width();
+                        if (h == null)
+                            h = dummyDiv.find("div.tickLabel").height();
+                    }
                     dummyDiv.remove();
                 }
             }
@@ -1036,6 +1216,8 @@
             else {
                 // consider autoscaling
                 var margin = opts.autoscaleMargin;
+                var margin_max = opts.autoscaleMax;
+
                 if (margin != null) {
                     if (opts.min == null) {
                         min -= delta * margin;
@@ -1046,6 +1228,7 @@
                     }
                     if (opts.max == null) {
                         max += delta * margin;
+                        max = margin_max && (max > margin_max) ? margin_max : max
                         if (max > 0 && axis.datamax != null && axis.datamax <= 0)
                             max = 0;
                     }
@@ -1143,15 +1326,15 @@
                     var step = tickSize * timeUnitSize[unit];
 
                     if (unit == "second")
-                        d.setUTCSeconds(floorInBase(d.getUTCSeconds(), tickSize));
+                        d.setUTCSeconds($.plot.floorInBase(d.getUTCSeconds(), tickSize));
                     if (unit == "minute")
-                        d.setUTCMinutes(floorInBase(d.getUTCMinutes(), tickSize));
+                        d.setUTCMinutes($.plot.floorInBase(d.getUTCMinutes(), tickSize));
                     if (unit == "hour")
-                        d.setUTCHours(floorInBase(d.getUTCHours(), tickSize));
+                        d.setUTCHours($.plot.floorInBase(d.getUTCHours(), tickSize));
                     if (unit == "month")
-                        d.setUTCMonth(floorInBase(d.getUTCMonth(), tickSize));
+                        d.setUTCMonth($.plot.floorInBase(d.getUTCMonth(), tickSize));
                     if (unit == "year")
-                        d.setUTCFullYear(floorInBase(d.getUTCFullYear(), tickSize));
+                        d.setUTCFullYear($.plot.floorInBase(d.getUTCFullYear(), tickSize));
                     
                     // reset smaller components
                     d.setUTCMilliseconds(0);
@@ -1268,7 +1451,7 @@
                     var ticks = [];
 
                     // spew out all possible ticks
-                    var start = floorInBase(axis.min, axis.tickSize),
+                    var start = $.plot.floorInBase(axis.min, axis.tickSize),
                         i = 0, v = Number.NaN, prev;
                     do {
                         prev = v;
@@ -1364,13 +1547,22 @@
         function snapRangeToTicks(axis, ticks) {
             if (axis.options.autoscaleMargin && ticks.length > 0) {
                 // snap to ticks
-                if (axis.options.min == null)
+                if (axis.options.min == null) {
                     axis.min = Math.min(axis.min, ticks[0].v);
-                if (axis.options.max == null && ticks.length > 1)
+                }
+                if (axis.options.max == null && ticks.length > 1) {
                     axis.max = Math.max(axis.max, ticks[ticks.length - 1].v);
+                    if (axis.options.autoscaleMax) {
+                        axis.max = Math.min(axis.max, axis.options.autoscaleMax);
+                    }
+                }
             }
         }
       
+        /**
+         * Draw the grid (if applicable) and all series, with the order depending on whether the
+         * grid should be above the series or not.
+         */
         function draw() {
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
@@ -1613,7 +1805,30 @@
             ctx.restore();
         }
 
+
         function insertAxisLabels() {
+            var addRotateLabelStyles = function(styles,axis){
+                var b = '';
+                if ($.browser.safari || $.browser.webkit)
+                    b = 'webkit';
+                else if ($.browser.mozilla)
+                    b = 'moz';
+                else if ($.browser.opera)
+                    b = 'o';
+                //flip the angle so IE/non-IE do the same thing
+                styles.push("-"+b+"-transform:rotate("+-axis.options.labelAngle+"deg)");
+                styles.push("-"+b+"-transform-origin:top left");
+            }
+
+            if ($.browser.msie) 
+              addRotateLabelStyles = function(styles,axis) {
+                    var rad = axis.options.labelAngle * Math.PI / 180,
+                    cos = Math.cos(rad),
+                    sin = Math.sin(rad);
+                 
+                    styles.push("filter:progid:DXImageTransform.Microsoft.Matrix(M11="+cos+", M12="+sin+", M21="+(-sin)+", M22="+cos+",sizingMethod='auto expand'");
+                }
+
             placeholder.find(".tickLabels").remove();
             
             var html = ['<div class="tickLabels" style="font-size:smaller">'];
@@ -1621,6 +1836,7 @@
             var axes = getUsedAxes();
             for (var j = 0; j < axes.length; ++j) {
                 var axis = axes[j], box = axis.box;
+                var angledPos = calculateAxisAngledLabels(axis);
                 //debug: html.push('<div style="position:absolute;opacity:0.10;background-color:red;left:' + box.left + 'px;top:' + box.top + 'px;width:' + box.width +  'px;height:' + box.height + 'px"></div>')
                 html.push('<div class="' + axis.direction + 'Axis ' + axis.direction + axis.n + 'Axis" style="color:' + axis.options.color + '">');
                 for (var i = 0; i < axis.ticks.length; ++i) {
@@ -1631,30 +1847,47 @@
                     var pos = {}, align;
                     
                     if (axis.direction == "x") {
-                        align = "center";
-                        pos.left = Math.round(plotOffset.left + axis.p2c(tick.v) - axis.labelWidth/2);
-                        if (axis.position == "bottom")
-                            pos.top = box.top + box.padding;
-                        else
-                            pos.bottom = canvasHeight - (box.top + box.height - box.padding);
-                    }
-                    else {
-                        pos.top = Math.round(plotOffset.top + axis.p2c(tick.v) - axis.labelHeight/2);
-                        if (axis.position == "left") {
-                            pos.right = canvasWidth - (box.left + box.width - box.padding)
-                            align = "right";
+                        if (axis.options.labelAngle != 0){
+                            align = angledPos.align;
+                            pos.left = Math.round(plotOffset.left + axis.p2c(tick.v));
+                            pos.left += angledPos.oLeft;
+                            pos.top = angledPos.top;
+                        } else {
+                            align = "center";
+                            pos.left = Math.round(plotOffset.left + axis.p2c(tick.v) - axis.labelWidth/2);
+                            if (axis.position == "bottom")
+                                pos.top = box.top + box.padding;
+                            else
+                                pos.bottom = canvasHeight - (box.top + box.height - box.padding);
                         }
-                        else {
-                            pos.left = box.left + box.padding;
-                            align = "left";
+                    } 
+                    else {
+                        if (axis.options.labelAngle != 0){
+                            align = angledPos.align;
+                            pos.top = Math.round(plotOffset.top + axis.p2c(tick.v));
+                            pos.top += angledPos.oTop;
+                            pos.left = angledPos.left;
+                        } else {
+                            pos.top = Math.round(plotOffset.top + axis.p2c(tick.v) - axis.labelHeight/2);
+                            if (axis.position == "left") {
+                                pos.right = canvasWidth - (box.left + box.width - box.padding)
+                                align = "right";
+                            }
+                            else {
+                                pos.left = box.left + box.padding;
+                                align = "left";
+                            }
                         }
                     }
 
-                    pos.width = axis.labelWidth;
+                    pos.width = (axis.options.labelAngle != 0)?axis.options.origWidth:axis.labelWidth;
 
                     var style = ["position:absolute", "text-align:" + align ];
                     for (var a in pos)
                         style.push(a + ":" + pos[a] + "px")
+
+                    if (axis.options.labelAngle != 0)
+                        addRotateLabelStyles(style,axis);
                     
                     html.push('<div class="tickLabel" style="' + style.join(';') + '">' + tick.label + '</div>');
                 }
@@ -1666,6 +1899,11 @@
             placeholder.append(html.join(""));
         }
 
+        /**
+         * Draw given series, with it's options.
+         *
+         * @param series <Object> containing series options
+         */
         function drawSeries(series) {
             if (series.lines.show)
                 drawSeriesLines(series);
@@ -2209,10 +2447,11 @@
             redrawTimeout = null;
         
         // returns the data item the mouse is over, or null if none is found
-        function findNearbyItem(mouseX, mouseY, seriesFilter) {
+        function findNearbyItems(mouseX, mouseY, seriesFilter) {
             var maxDistance = options.grid.mouseActiveRadius,
                 smallestDistance = maxDistance * maxDistance + 1,
-                item = null, foundPoint = false, i, j;
+                item = null, foundPoint = false, i, j,
+                nearbyItems = [];
 
             for (i = series.length - 1; i >= 0; --i) {
                 if (!seriesFilter(series[i]))
@@ -2240,6 +2479,9 @@
                             y - my > maxy || y - my < -maxy)
                             continue;
 
+                        var nearItem = [i, j / ps];
+                        nearbyItems.push(nearItem);                            
+
                         // We have to calculate distances in pixels, not in
                         // data units, because the scales of the axes may be different
                         var dx = Math.abs(axisx.p2c(x) - mouseX),
@@ -2250,7 +2492,7 @@
                         // (last generally means on top of)
                         if (dist < smallestDistance) {
                             smallestDistance = dist;
-                            item = [i, j / ps];
+                            item = nearItem;
                         }
                     }
                 }
@@ -2275,16 +2517,36 @@
                 }
             }
 
-            if (item) {
-                i = item[0];
-                j = item[1];
-                ps = series[i].datapoints.pointsize;
+           if (item) {
+                // In some cases (bars, e.g.), we may end up with no nearbyItems; populate it with
+                // item in those cases.
+                if (nearbyItems.length == 0) {
+                    nearbyItems.push(item);
+                }
                 
-                return { datapoint: series[i].datapoints.points.slice(j * ps, (j + 1) * ps),
-                         dataIndex: j,
-                         series: series[i],
+                var rv = {item: null, all: []};
+                var temp_item = null;
+                for (var k = 0; k < nearbyItems.length; k += 1) {
+                    temp_item = nearbyItems[k];
+                    i = temp_item[0];
+                    j = temp_item[1];
+                    ps = series[i].datapoints.pointsize;
+
+                    return_item = { datapoint: series[i].datapoints.points.slice(j * ps, (j + 1) * ps),
+                             dataIndex: j,
+                           series: series[i],
                          seriesIndex: i };
+
+                    if (temp_item == item) {
+                        rv.item = return_item;
+                    }
+                    else {
+                        rv.all.push(return_item);
+                    }
+                }
+                return rv;
             }
+
             
             return null;
         }
@@ -2317,7 +2579,9 @@
             pos.pageX = event.pageX;
             pos.pageY = event.pageY;
 
-            var item = findNearbyItem(canvasX, canvasY, seriesFilter);
+            var nearby_items = findNearbyItems(canvasX, canvasY, seriesFilter);
+            var item = nearby_items && nearby_items.item;
+            nearby_items = nearby_items && nearby_items.all
 
             if (item) {
                 // fill in mouse pos for any listeners out there
@@ -2340,7 +2604,7 @@
                     highlight(item.series, item.datapoint, eventname);
             }
             
-            placeholder.trigger(eventname, [ pos, item ]);
+            placeholder.trigger(eventname, [ pos, item, nearby_items ]);
         }
 
         function triggerRedrawOverlay() {
@@ -2423,6 +2687,7 @@
             var x = point[0], y = point[1],
                 axisx = series.xaxis, axisy = series.yaxis;
             
+            // Don't draw highlight if point is not within axes bounds
             if (x < axisx.min || x > axisx.max || y < axisy.min || y > axisy.max)
                 return;
             
@@ -2542,8 +2807,14 @@
         return r.join("");
     };
     
-    // round to nearby lower multiple of base
-    function floorInBase(n, base) {
+    /**
+     * Floor given number, n, to nearby lower multiple of base.
+     *
+     * @param n <Number> to round
+     * @param base <Number> 
+     * @return <Number> closest multiple of base to n by floor
+     */
+    $.plot.floorInBase = function(n, base) {
         return base * Math.floor(n / base);
     }
     
