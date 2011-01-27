@@ -743,6 +743,25 @@
          * variables.
          */
         function constructCanvas() {
+<<<<<<< HEAD
+
+            /**
+             * Given a width and height, return a canvas element, using excanvas where needed.
+             *
+             * @param width <Number> canvas width in pixels
+             * @param height <Number> canvas height in pixels
+             */
+            function makeCanvas(width, height) {
+                var c = document.createElement('canvas');
+                c.width = width;
+                c.height = height;
+                if (!c.getContext) // excanvas hack
+                    c = window.G_vmlCanvasManager.initElement(c);
+                return c;
+            }
+            
+=======
+>>>>>>> d2fec8800feae502ea7781e130a7cd03ba91bcfe
             canvasWidth = placeholder.width();
             canvasHeight = placeholder.height();
 
