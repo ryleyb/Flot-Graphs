@@ -156,6 +156,7 @@
         plotOffset = { left: 0, right: 0, top: 0, bottom: 0},
         canvasWidth = 0, canvasHeight = 0,
         plotWidth = 0, plotHeight = 0,
+        hasCSS3transform = false,
         hooks = {
             processOptions: [],
             processRawData: [],
@@ -911,24 +912,24 @@
             if (axis.position == 'bottom'){
                 top = box.top + box.padding;
                 if (angle < 0) {
-                    if (!$.browser.msie)
+                    if (hasCSS3transform)
                         oLeft = -dims.a_left.x;
                     else
                         oLeft = dims.a_left.x;
                 } else {
                     align = "right";
                     oLeft = -dims.a_right.x;
-                    if (!$.browser.msie)
+                    if (hasCSS3transform)
                         top += dims.topmost.y;
                 }
             } else if (axis.position == 'top') {
                 top = box.top; 
-                if (!$.browser.msie && angle > 0)
+                if (hasCSS3transform && angle > 0)
                     top += box.height - box.padding + dims.bottommost.y;
 
                 if (angle < 0)
                     align = "right";
-                if ($.browser.msie && angle < 0){
+                if (!hasCSS3transform && angle < 0){
                     oLeft = -dims.width - dims.a_left.x;
                 } else {
                     if (angle < 0)
@@ -941,11 +942,11 @@
                 left = box.left;
                 if (angle < 0) {
                     oTop = dims.a_right.y;
-                    if (!$.browser.msie)
+                    if (hasCSS3transform)
                         left -= dims.leftmost.x;
                 } else {
                     //left += (axis.options.origWidth-dims.width);
-                    if ($.browser.msie)
+                    if (!hasCSS3transform)
                         oTop = -dims.a_left.y;
                     else
                         oTop = dims.a_right.y;
@@ -954,11 +955,11 @@
                 align = "left";
                 left = box.left + box.padding;
                 if (angle < 0) {
-                    if (!$.browser.msie)
+                    if (hasCSS3transform)
                         left -= dims.leftmost.x;
                     oTop = -dims.a_left.y;
                 } else {
-                    if ($.browser.msie)
+                    if (!hasCSS3transform)
                         oTop = -dims.height + dims.a_left.y;
                     else
                         oTop = -dims.a_left.y;
@@ -1807,27 +1808,37 @@
 
 
         function insertAxisLabels() {
-            var addRotateLabelStyles = function(styles,axis){
-                var b = '';
-                if ($.browser.safari || $.browser.webkit)
-                    b = 'webkit';
-                else if ($.browser.mozilla)
-                    b = 'moz';
-                else if ($.browser.opera)
-                    b = 'o';
-                //flip the angle so IE/non-IE do the same thing
-                styles.push("-"+b+"-transform:rotate("+-axis.options.labelAngle+"deg)");
-                styles.push("-"+b+"-transform-origin:top left");
+            //figure out whether the browser supports CSS3 2d transforms 
+            //for label angle, logic borrowed from Modernizr
+            var transform = undefined,addRotateLabelStyles = function () {},
+            props = [ 'transformProperty', 'WebkitTransform', 'MozTransform', 'OTransform', 'msTransform' ],
+            prefix = [ '', '-webkit-', '-moz-', '-o-', '-ms-' ],
+            testEl = document.createElement('flotelement');
+
+            for ( var i in props) {
+                if ( testEl.style[ props[i] ] !== undefined ) {
+                    transform = prefix[i];
+                    break;
+                }
             }
 
-            if ($.browser.msie) 
-              addRotateLabelStyles = function(styles,axis) {
+            if (transform != undefined) { //use CSS3 2d transforms
+                hasCSS3transform = true;
+                addRotateLabelStyles = function(styles,axis){
+                    //flip the angle so CSS3 and Filter work the same way
+                    styles.push(transform+"transform:rotate("+-axis.options.labelAngle+"deg)");
+                    styles.push(transform+"transform-origin:top left");
+                }
+            } else if (typeof testEl.style.filter == 'string' || 
+                       typeof testEl.style.filters == 'object') { //IE without 2d transforms
+                addRotateLabelStyles = function(styles,axis) {
                     var rad = axis.options.labelAngle * Math.PI / 180,
                     cos = Math.cos(rad),
                     sin = Math.sin(rad);
                  
                     styles.push("filter:progid:DXImageTransform.Microsoft.Matrix(M11="+cos+", M12="+sin+", M21="+(-sin)+", M22="+cos+",sizingMethod='auto expand'");
                 }
+            } 
 
             placeholder.find(".tickLabels").remove();
             
