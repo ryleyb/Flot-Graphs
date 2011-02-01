@@ -20,7 +20,7 @@
  * Note that .scale() and .add() work in-place instead of returning
  * new objects.
  */ 
-(function(){jQuery.color={};jQuery.color.make=function(E,D,B,C){var F={};F.r=E||0;F.g=D||0;F.b=B||0;F.a=C!=null?C:1;F.add=function(I,H){for(var G=0;G<I.length;++G){F[I.charAt(G)]+=H}return F.normalize()};F.scale=function(I,H){for(var G=0;G<I.length;++G){F[I.charAt(G)]*=H}return F.normalize()};F.toString=function(){if(F.a>=1){return"rgb("+[F.r,F.g,F.b].join(",")+")"}else{return"rgba("+[F.r,F.g,F.b,F.a].join(",")+")"}};F.normalize=function(){function G(I,J,H){return J<I?I:(J>H?H:J)}F.r=G(0,parseInt(F.r),255);F.g=G(0,parseInt(F.g),255);F.b=G(0,parseInt(F.b),255);F.a=G(0,F.a,1);return F};F.clone=function(){return jQuery.color.make(F.r,F.b,F.g,F.a)};return F.normalize()};jQuery.color.extract=function(C,B){var D;do{D=C.css(B).toLowerCase();if(D!=""&&D!="transparent"){break}C=C.parent()}while(!jQuery.nodeName(C.get(0),"body"));if(D=="rgba(0, 0, 0, 0)"){D="transparent"}return jQuery.color.parse(D)};jQuery.color.parse=function(E){var D,B=jQuery.color.make;if(D=/rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(E)){return B(parseInt(D[1],10),parseInt(D[2],10),parseInt(D[3],10))}if(D=/rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(E)){return B(parseInt(D[1],10),parseInt(D[2],10),parseInt(D[3],10),parseFloat(D[4]))}if(D=/rgb\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*\)/.exec(E)){return B(parseFloat(D[1])*2.55,parseFloat(D[2])*2.55,parseFloat(D[3])*2.55)}if(D=/rgba\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(E)){return B(parseFloat(D[1])*2.55,parseFloat(D[2])*2.55,parseFloat(D[3])*2.55,parseFloat(D[4]))}if(D=/#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(E)){return B(parseInt(D[1],16),parseInt(D[2],16),parseInt(D[3],16))}if(D=/#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/.exec(E)){return B(parseInt(D[1]+D[1],16),parseInt(D[2]+D[2],16),parseInt(D[3]+D[3],16))}var C=jQuery.trim(E).toLowerCase();if(C=="transparent"){return B(255,255,255,0)}else{D=A[C];return B(D[0],D[1],D[2])}};var A={aqua:[0,255,255],azure:[240,255,255],beige:[245,245,220],black:[0,0,0],blue:[0,0,255],brown:[165,42,42],cyan:[0,255,255],darkblue:[0,0,139],darkcyan:[0,139,139],darkgrey:[169,169,169],darkgreen:[0,100,0],darkkhaki:[189,183,107],darkmagenta:[139,0,139],darkolivegreen:[85,107,47],darkorange:[255,140,0],darkorchid:[153,50,204],darkred:[139,0,0],darksalmon:[233,150,122],darkviolet:[148,0,211],fuchsia:[255,0,255],gold:[255,215,0],green:[0,128,0],indigo:[75,0,130],khaki:[240,230,140],lightblue:[173,216,230],lightcyan:[224,255,255],lightgreen:[144,238,144],lightgrey:[211,211,211],lightpink:[255,182,193],lightyellow:[255,255,224],lime:[0,255,0],magenta:[255,0,255],maroon:[128,0,0],navy:[0,0,128],olive:[128,128,0],orange:[255,165,0],pink:[255,192,203],purple:[128,0,128],violet:[128,0,128],red:[255,0,0],silver:[192,192,192],white:[255,255,255],yellow:[255,255,0]}})();
+(function($){$.color={};$.color.make=function(E,D,B,C){var F={};F.r=E||0;F.g=D||0;F.b=B||0;F.a=C!=null?C:1;F.add=function(I,H){for(var G=0;G<I.length;++G){F[I.charAt(G)]+=H}return F.normalize()};F.scale=function(I,H){for(var G=0;G<I.length;++G){F[I.charAt(G)]*=H}return F.normalize()};F.toString=function(){if(F.a>=1){return"rgb("+[F.r,F.g,F.b].join(",")+")"}else{return"rgba("+[F.r,F.g,F.b,F.a].join(",")+")"}};F.normalize=function(){function G(I,J,H){return J<I?I:(J>H?H:J)}F.r=G(0,parseInt(F.r),255);F.g=G(0,parseInt(F.g),255);F.b=G(0,parseInt(F.b),255);F.a=G(0,F.a,1);return F};F.clone=function(){return $.color.make(F.r,F.b,F.g,F.a)};return F.normalize()};$.color.extract=function(C,B){var D;do{D=C.css(B).toLowerCase();if(D!=""&&D!="transparent"){break}C=C.parent()}while(!$.nodeName(C.get(0),"body"));if(D=="rgba(0, 0, 0, 0)"){D="transparent"}return $.color.parse(D)};$.color.parse=function(E){var D,B=$.color.make;if(D=/rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(E)){return B(parseInt(D[1],10),parseInt(D[2],10),parseInt(D[3],10))}if(D=/rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(E)){return B(parseInt(D[1],10),parseInt(D[2],10),parseInt(D[3],10),parseFloat(D[4]))}if(D=/rgb\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*\)/.exec(E)){return B(parseFloat(D[1])*2.55,parseFloat(D[2])*2.55,parseFloat(D[3])*2.55)}if(D=/rgba\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(E)){return B(parseFloat(D[1])*2.55,parseFloat(D[2])*2.55,parseFloat(D[3])*2.55,parseFloat(D[4]))}if(D=/#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(E)){return B(parseInt(D[1],16),parseInt(D[2],16),parseInt(D[3],16))}if(D=/#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/.exec(E)){return B(parseInt(D[1]+D[1],16),parseInt(D[2]+D[2],16),parseInt(D[3]+D[3],16))}var C=$.trim(E).toLowerCase();if(C=="transparent"){return B(255,255,255,0)}else{D=A[C];return B(D[0],D[1],D[2])}};var A={aqua:[0,255,255],azure:[240,255,255],beige:[245,245,220],black:[0,0,0],blue:[0,0,255],brown:[165,42,42],cyan:[0,255,255],darkblue:[0,0,139],darkcyan:[0,139,139],darkgrey:[169,169,169],darkgreen:[0,100,0],darkkhaki:[189,183,107],darkmagenta:[139,0,139],darkolivegreen:[85,107,47],darkorange:[255,140,0],darkorchid:[153,50,204],darkred:[139,0,0],darksalmon:[233,150,122],darkviolet:[148,0,211],fuchsia:[255,0,255],gold:[255,215,0],green:[0,128,0],indigo:[75,0,130],khaki:[240,230,140],lightblue:[173,216,230],lightcyan:[224,255,255],lightgreen:[144,238,144],lightgrey:[211,211,211],lightpink:[255,182,193],lightyellow:[255,255,224],lime:[0,255,0],magenta:[255,0,255],maroon:[128,0,0],navy:[0,0,128],olive:[128,128,0],orange:[255,165,0],pink:[255,192,203],purple:[128,0,128],violet:[128,0,128],red:[255,0,0],silver:[192,192,192],white:[255,255,255],yellow:[255,255,0]}})(jQuery);
 
 /* Javascript plotting library for jQuery, v. 0.6.
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -156,6 +156,7 @@
         plotOffset = { left: 0, right: 0, top: 0, bottom: 0},
         canvasWidth = 0, canvasHeight = 0,
         plotWidth = 0, plotHeight = 0,
+        hasCSS3transform = false,
         hooks = {
             processOptions: [],
             processRawData: [],
@@ -184,7 +185,7 @@
         };
         plot.getData = function () { return series; };
         plot.getAxis = function (dir, number) {
-            var a = (dir == x ? xaxes : yaxes)[number - 1];
+            var a = (dir == "x" ? xaxes : yaxes)[number - 1];
             if (a && !a.used)
                 a = null;
             return a;
@@ -305,7 +306,7 @@
                 $.extend(true, options.series.points, options.points);
             if (options.bars)
                 $.extend(true, options.series.bars, options.bars);
-            if (options.shadowSize)
+            if (options.shadowSize != null)
                 options.series.shadowSize = options.shadowSize;
 
             for (i = 0; i < options.xaxes.length; ++i)
@@ -339,7 +340,7 @@
             for (var i = 0; i < d.length; ++i) {
                 var s = $.extend(true, {}, options.series);
 
-                if (d[i].data) {
+                if (d[i].data != null) {
                     s.data = d[i].data; // move the data instead of deep-copy
                     delete d[i].data;
 
@@ -743,58 +744,47 @@
          * variables.
          */
         function constructCanvas() {
+            canvasWidth = placeholder.width();
+            canvasHeight = placeholder.height();
 
-            /**
-             * Given a width and height, return a canvas element, using excanvas where needed.
-             *
-             * @param width <Number> canvas width in pixels
-             * @param height <Number> canvas height in pixels
-             */
-            function makeCanvas(width, height) {
+             // excanvas hack, if there are any canvases here, whack
+             // the state on them manually
+            if (window.G_vmlCanvasManager)
+                placeholder.find("canvas").each(function () {
+                    this.context_ = null;
+                });
+            
+            placeholder.html(""); // clear placeholder
+            
+            if (placeholder.css("position") == 'static')
+                placeholder.css("position", "relative"); // for positioning labels and overlay
+
+            if (canvasWidth <= 0 || canvasHeight <= 0)
+                throw "Invalid dimensions for plot, width = " + canvasWidth + ", height = " + canvasHeight;
+
+            function makeCanvas(skipPositioning) {
                 var c = document.createElement('canvas');
-                c.width = width;
-                c.height = height;
+                c.width = canvasWidth;
+                c.height = canvasHeight;
+                
+                if (!skipPositioning)
+                    $(c).css({ position: 'absolute', left: 0, top: 0 });
+                
+                $(c).appendTo(placeholder);
+                
                 if (!c.getContext) // excanvas hack
                     c = window.G_vmlCanvasManager.initElement(c);
+
                 return c;
             }
             
-            canvasWidth = placeholder.width();
-            canvasHeight = placeholder.height();
-            var checkCanvas = placeholder.children('canvas');
-            if (checkCanvas.length && 
-                (checkCanvas.get(0).width == canvasWidth) && 
-                (checkCanvas.get(0).height == canvasHeight)){
-                canvas = checkCanvas.get(0);
-                ctx = canvas.getContext('2d');
-                overlay = checkCanvas.get(1);
-                octx = overlay.getContext('2d');
-                
-                //manually clear canvas
-                ctx.clearRect(0,0,canvasWidth,canvasHeight);
-                octx.clearRect(0,0,canvasWidth,canvasHeight);
-                unbindEvents();
-            } else {
-                placeholder.get(0).innerHTML = ''; //this helps with leaky memory possibly 
-                if (placeholder.css("position") == 'static')
-                    placeholder.css("position", "relative"); // for positioning labels and overlay
+            // the canvas
+            canvas = makeCanvas(true);
+            ctx = canvas.getContext("2d");
 
-                if (canvasWidth <= 0 || canvasHeight <= 0)
-                    throw "Invalid dimensions for plot, width = " + canvasWidth + ", height = " + canvasHeight;
-
-                if (window.G_vmlCanvasManager) // excanvas hack
-                    window.G_vmlCanvasManager.init_(document); // make sure everything is setup
-                
-                // the canvas
-                canvas = $(makeCanvas(canvasWidth, canvasHeight)).appendTo(placeholder).get(0);
-                ctx = canvas.getContext("2d");
-
-                // overlay canvas for interactive features
-                overlay = $(makeCanvas(canvasWidth, canvasHeight)).css({ position: 'absolute', left: 0, top: 0 }).appendTo(placeholder).get(0);
-                octx = overlay.getContext("2d");
-            }
-
-            octx.stroke();
+            // overlay canvas for interactive features
+            overlay = makeCanvas();
+            octx = overlay.getContext("2d");
         }
 
         function bindEvents() {
@@ -803,8 +793,10 @@
             eventHolder = $([overlay, canvas]);
 
             // bind events
-            if (options.grid.hoverable)
+            if (options.grid.hoverable) {
                 eventHolder.mousemove(onMouseMove);
+                eventHolder.mouseleave(onMouseLeave);
+            }
 
             if (options.grid.clickable)
                 eventHolder.click(onClick);
@@ -910,7 +902,7 @@
         // for left/right axes, a fixed left and a top offset
         function calculateAxisAngledLabels(axis){
             var angle = axis.options.labelAngle;
-            if (angle == 0)
+            if (angle == undefined || angle == 0)
                 return {}; 
             var box = axis.box;
             var dims = calculateRotatedDimensions(axis.options.origWidth,axis.options.origHeight,angle);
@@ -920,24 +912,24 @@
             if (axis.position == 'bottom'){
                 top = box.top + box.padding;
                 if (angle < 0) {
-                    if (!$.browser.msie)
+                    if (hasCSS3transform)
                         oLeft = -dims.a_left.x;
                     else
                         oLeft = dims.a_left.x;
                 } else {
                     align = "right";
                     oLeft = -dims.a_right.x;
-                    if (!$.browser.msie)
+                    if (hasCSS3transform)
                         top += dims.topmost.y;
                 }
             } else if (axis.position == 'top') {
                 top = box.top; 
-                if (!$.browser.msie && angle > 0)
+                if (hasCSS3transform && angle > 0)
                     top += box.height - box.padding + dims.bottommost.y;
 
                 if (angle < 0)
                     align = "right";
-                if ($.browser.msie && angle < 0){
+                if (!hasCSS3transform && angle < 0){
                     oLeft = -dims.width - dims.a_left.x;
                 } else {
                     if (angle < 0)
@@ -950,11 +942,11 @@
                 left = box.left;
                 if (angle < 0) {
                     oTop = dims.a_right.y;
-                    if (!$.browser.msie)
+                    if (hasCSS3transform)
                         left -= dims.leftmost.x;
                 } else {
-                    left += (axis.options.origWidth-dims.width);
-                    if ($.browser.msie)
+                    //left += (axis.options.origWidth-dims.width);
+                    if (!hasCSS3transform)
                         oTop = -dims.a_left.y;
                     else
                         oTop = dims.a_right.y;
@@ -963,11 +955,11 @@
                 align = "left";
                 left = box.left + box.padding;
                 if (angle < 0) {
-                    if (!$.browser.msie)
+                    if (hasCSS3transform)
                         left -= dims.leftmost.x;
                     oTop = -dims.a_left.y;
                 } else {
-                    if ($.browser.msie)
+                    if (!hasCSS3transform)
                         oTop = -dims.height + dims.a_left.y;
                     else
                         oTop = -dims.a_left.y;
@@ -1053,12 +1045,13 @@
                 w = 0;
             if (h == null)
                 h = 0;
+
             axis.labelWidth = w;
             axis.labelHeight = h;
         }
 
         function computeAxisBox(axis) {
-            if (!axis || (!axis.used && !(axis.labelWidth || axis.labelHeight)))
+            if (!axis || !axis.labelWidth || !axis.labelHeight)
                 return;
 
             // find the bounding box of the axis by looking at label
@@ -1129,14 +1122,10 @@
             axis.innermost = innermost;
         }
 
-        function unbindEvents() {
-            // we include the canvas in the event holder too, because IE 7
-            // sometimes has trouble with the stacking order
-            eventHolder = $([overlay, canvas]);
-            eventHolder.unbind();
-        }
-
         function fixupAxisBox(axis) {
+            if (!axis || !axis.labelWidth || !axis.labelHeight)
+                return;
+            
             // set remaining bounding box coordinates
             if (axis.direction == "x") {
                 axis.box.left = plotOffset.left;
@@ -1193,7 +1182,7 @@
             
             plotWidth = canvasWidth - plotOffset.left - plotOffset.right;
             plotHeight = canvasHeight - plotOffset.bottom - plotOffset.top;
-            
+
             // now we got the proper plotWidth/Height, we can compute the scaling
             for (k = 0; k < axes.length; ++k)
                 setTransformationHelpers(axes[k]);
@@ -1527,7 +1516,7 @@
         function setTicks(axis) {
             axis.ticks = [];
 
-            var oticks = axis.options.ticks, ticks = null;
+            var oticks = axis.options.ticks, ticks = [];
             if (oticks == null || (typeof oticks == "number" && oticks > 0))
                 ticks = axis.tickGenerator(axis);
             else if (oticks) {
@@ -1557,7 +1546,7 @@
         }
 
         function snapRangeToTicks(axis, ticks) {
-            if (axis.options.autoscaleMargin != null && ticks.length > 0) {
+            if (axis.options.autoscaleMargin && ticks.length > 0) {
                 // snap to ticks
                 if (axis.options.min == null) {
                     axis.min = Math.min(axis.min, ticks[0].v);
@@ -1579,6 +1568,10 @@
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
             var grid = options.grid;
+
+            // draw background, if any
+            if (grid.show && grid.backgroundColor)
+                drawBackground();
             
             if (grid.show && !grid.aboveData)
                 drawGrid();
@@ -1629,17 +1622,20 @@
             return { from: from, to: to, axis: axis };
         }
         
+        function drawBackground() {
+            ctx.save();
+            ctx.translate(plotOffset.left, plotOffset.top);
+
+            ctx.fillStyle = getColorOrGradient(options.grid.backgroundColor, plotHeight, 0, "rgba(255, 255, 255, 0)");
+            ctx.fillRect(0, 0, plotWidth, plotHeight);
+            ctx.restore();
+        }
+
         function drawGrid() {
             var i;
             
             ctx.save();
             ctx.translate(plotOffset.left, plotOffset.top);
-
-            // draw background, if any
-            if (options.grid.backgroundColor) {
-                ctx.fillStyle = getColorOrGradient(options.grid.backgroundColor, plotHeight, 0, "rgba(255, 255, 255, 0)");
-                ctx.fillRect(0, 0, plotWidth, plotHeight);
-            }
 
             // draw markings
             var markings = options.grid.markings;
@@ -1716,9 +1712,12 @@
                 var axis = axes[j], box = axis.box,
                     t = axis.tickLength, x, y, xoff, yoff;
 
+                if (axis.ticks.length == 0)
+                    continue;
+                
                 ctx.strokeStyle = axis.options.tickColor || $.color.parse(axis.options.color).scale('a', 0.22).toString();
                 ctx.lineWidth = 1;
-                
+
                 // find the edges
                 if (axis.direction == "x") {
                     x = 0;
@@ -1809,27 +1808,37 @@
 
 
         function insertAxisLabels() {
-            var addRotateLabelStyles = function(styles,axis){
-                var b = '';
-                if ($.browser.safari || $.browser.webkit)
-                    b = 'webkit';
-                else if ($.browser.mozilla)
-                    b = 'moz';
-                else if ($.browser.opera)
-                    b = 'o';
-                //flip the angle so IE/non-IE do the same thing
-                styles.push("-"+b+"-transform:rotate("+-axis.options.labelAngle+"deg)");
-                styles.push("-"+b+"-transform-origin:top left");
+            //figure out whether the browser supports CSS3 2d transforms 
+            //for label angle, logic borrowed from Modernizr
+            var transform = undefined,addRotateLabelStyles = function () {},
+            props = [ 'transformProperty', 'WebkitTransform', 'MozTransform', 'OTransform', 'msTransform' ],
+            prefix = [ '', '-webkit-', '-moz-', '-o-', '-ms-' ],
+            testEl = document.createElement('flotelement');
+
+            for ( var i in props) {
+                if ( testEl.style[ props[i] ] !== undefined ) {
+                    transform = prefix[i];
+                    break;
+                }
             }
 
-            if ($.browser.msie) 
-              addRotateLabelStyles = function(styles,axis) {
+            if (transform != undefined) { //use CSS3 2d transforms
+                hasCSS3transform = true;
+                addRotateLabelStyles = function(styles,axis){
+                    //flip the angle so CSS3 and Filter work the same way
+                    styles.push(transform+"transform:rotate("+-axis.options.labelAngle+"deg)");
+                    styles.push(transform+"transform-origin:top left");
+                }
+            } else if (typeof testEl.style.filter == 'string' || 
+                       typeof testEl.style.filters == 'object') { //IE without 2d transforms
+                addRotateLabelStyles = function(styles,axis) {
                     var rad = axis.options.labelAngle * Math.PI / 180,
                     cos = Math.cos(rad),
                     sin = Math.sin(rad);
                  
                     styles.push("filter:progid:DXImageTransform.Microsoft.Matrix(M11="+cos+", M12="+sin+", M21="+(-sin)+", M22="+cos+",sizingMethod='auto expand'");
                 }
+            } 
 
             placeholder.find(".tickLabels").remove();
             
@@ -2558,7 +2567,13 @@
                 triggerClickHoverEvent("plothover", e,
                                        function (s) { return s["hoverable"] != false; });
         }
-        
+
+        function onMouseLeave(e) {
+            if (options.grid.hoverable)
+                triggerClickHoverEvent("plothover", e,
+                                       function (s) { return false; });
+        }
+
         function onClick(e) {
             triggerClickHoverEvent("plotclick", e,
                                    function (s) { return s["clickable"] != false; });
@@ -2590,7 +2605,9 @@
                 for (var i = 0; i < highlights.length; ++i) {
                     var h = highlights[i];
                     if (h.auto == eventname &&
-                        !(item && h.series == item.series && h.point == item.datapoint))
+                        !(item && h.series == item.series &&
+                          h.point[0] == item.datapoint[0] &&
+                          h.point[1] == item.datapoint[1]))
                         unhighlight(h.series, h.point);
                 }
                 

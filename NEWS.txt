@@ -32,6 +32,15 @@ but if you just configure a base color Flot will now autogenerate a
 tick color by adding transparency. Backwards-compatibility hooks are
 in place.
 
+Final note: now that IE 9 is coming out with canvas support, you may
+want to adapt the excanvas include to skip loading it in IE 9 (the
+examples have been adapted thanks to Ryley Breiddal). An alternative
+to excanvas using Flash has also surfaced, if your graphs are slow in
+IE, you may want to give it a spin:
+
+  http://code.google.com/p/flashcanvas/
+
+
 Changes:
 
 - Support for specifying a bottom for each point for line charts when
@@ -82,7 +91,8 @@ Bug fixes:
 - Fixed a problem introduced in 0.6 with specifying a gradient with {
   brightness: x, opacity: y }.
 - Don't use $.browser.msie, check for getContext on the created canvas
-  element instead and try to use excanvas if it's not found.
+  element instead and try to use excanvas if it's not found (fixes IE
+  9 compatibility).
 - highlight(s, index) was looking up the point in the original s.data
   instead of in the computed datapoints array, which breaks with
   plugins that modify the datapoints (such as the stacking plugin).
@@ -95,9 +105,29 @@ Bug fixes:
   plugin, to guard against errors when synchronizing plots (fix by Lau
   Bech Lauritzen).
 - Fix bug in crosshair code with mouseout resetting the crosshair even
-  if it is locked (fix by Lau Bech Lauritzen).
+  if it is locked (fix by Lau Bech Lauritzen and Banko Adam).
 - Fix bug with points plotting using line width from lines rather than
   points.
+- Fix bug with passing non-array 0 data (for plugins that don't expect
+  arrays, patch by vpapp1).
+- Fix errors in JSON in examples so they work with jQuery 1.4.2
+  (fix reported by honestbleeps, issue 357).
+- Fix bug with tooltip in interacting.html, this makes the tooltip
+  much smoother (fix by bdkahn). Fix related bug inside highlighting
+  handler in Flot.
+- Use closure trick to make inline colorhelpers plugin respect
+  jQuery.noConflict(true), renaming the global jQuery object (reported
+  by Nick Stielau).
+- Listen for mouseleave events and fire a plothover event with empty
+  item when it occurs to drop highlights when the mouse leaves the
+  plot (reported by by outspirit).
+- Fix bug with using aboveData with a background (reported by
+  amitayd).
+- Fix possible excanvas leak (report and suggested fix by tom9729).
+- Fix bug with backwards compatibility for shadowSize = 0 (report and
+  suggested fix by aspinak).
+- Adapt examples to skip loading excanvas (fix by Ryley Breiddal).
+
 
 Flot 0.6
 --------
