@@ -1917,20 +1917,20 @@
          */
         function drawSeries(series) {
             if (series.lines.show)
-                drawSeriesLines(series);
+                drawSeriesLines(series,ctx);
             if (series.bars.show)
                 drawSeriesBars(series);
             if (series.points.show)
                 drawSeriesPoints(series);
         }
         
-        function drawSeriesLines(series) {
+        function drawSeriesLines(series,c) {
             function plotLine(datapoints, xoffset, yoffset, axisx, axisy) {
                 var points = datapoints.points,
                     ps = datapoints.pointsize,
                     prevx = null, prevy = null;
                 
-                ctx.beginPath();
+                c.beginPath();
                 for (var i = ps; i < points.length; i += ps) {
                     var x1 = points[i - ps], y1 = points[i - ps + 1],
                         x2 = points[i], y2 = points[i + 1];
@@ -1996,13 +1996,13 @@
                     }
 
                     if (x1 != prevx || y1 != prevy)
-                        ctx.moveTo(axisx.p2c(x1) + xoffset, axisy.p2c(y1) + yoffset);
+                        c.moveTo(axisx.p2c(x1) + xoffset, axisy.p2c(y1) + yoffset);
                     
                     prevx = x2;
                     prevy = y2;
-                    ctx.lineTo(axisx.p2c(x2) + xoffset, axisy.p2c(y2) + yoffset);
+                    c.lineTo(axisx.p2c(x2) + xoffset, axisy.p2c(y2) + yoffset);
                 }
-                ctx.stroke();
+                c.stroke();
             }
 
             function plotLineArea(datapoints, axisx, axisy) {
@@ -2036,7 +2036,7 @@
 
                         if (ps < 0 && i == segmentStart + ps) {
                             // done with the reverse sweep
-                            ctx.fill();
+                            c.fill();
                             areaOpen = false;
                             ps = -ps;
                             ypos = 1;
@@ -2080,20 +2080,20 @@
 
                     if (!areaOpen) {
                         // open area
-                        ctx.beginPath();
-                        ctx.moveTo(axisx.p2c(x1), axisy.p2c(bottom));
+                        c.beginPath();
+                        c.moveTo(axisx.p2c(x1), axisy.p2c(bottom));
                         areaOpen = true;
                     }
                     
                     // now first check the case where both is outside
                     if (y1 >= axisy.max && y2 >= axisy.max) {
-                        ctx.lineTo(axisx.p2c(x1), axisy.p2c(axisy.max));
-                        ctx.lineTo(axisx.p2c(x2), axisy.p2c(axisy.max));
+                        c.lineTo(axisx.p2c(x1), axisy.p2c(axisy.max));
+                        c.lineTo(axisx.p2c(x2), axisy.p2c(axisy.max));
                         continue;
                     }
                     else if (y1 <= axisy.min && y2 <= axisy.min) {
-                        ctx.lineTo(axisx.p2c(x1), axisy.p2c(axisy.min));
-                        ctx.lineTo(axisx.p2c(x2), axisy.p2c(axisy.min));
+                        c.lineTo(axisx.p2c(x1), axisy.p2c(axisy.min));
+                        c.lineTo(axisx.p2c(x2), axisy.p2c(axisy.min));
                         continue;
                     }
                     
@@ -2129,53 +2129,53 @@
                     // if the x value was changed we got a rectangle
                     // to fill
                     if (x1 != x1old) {
-                        ctx.lineTo(axisx.p2c(x1old), axisy.p2c(y1));
+                        c.lineTo(axisx.p2c(x1old), axisy.p2c(y1));
                         // it goes to (x1, y1), but we fill that below
                     }
                     
                     // fill triangular section, this sometimes result
                     // in redundant points if (x1, y1) hasn't changed
                     // from previous line to, but we just ignore that
-                    ctx.lineTo(axisx.p2c(x1), axisy.p2c(y1));
-                    ctx.lineTo(axisx.p2c(x2), axisy.p2c(y2));
+                    c.lineTo(axisx.p2c(x1), axisy.p2c(y1));
+                    c.lineTo(axisx.p2c(x2), axisy.p2c(y2));
 
                     // fill the other rectangle if it's there
                     if (x2 != x2old) {
-                        ctx.lineTo(axisx.p2c(x2), axisy.p2c(y2));
-                        ctx.lineTo(axisx.p2c(x2old), axisy.p2c(y2));
+                        c.lineTo(axisx.p2c(x2), axisy.p2c(y2));
+                        c.lineTo(axisx.p2c(x2old), axisy.p2c(y2));
                     }
                 }
             }
 
-            ctx.save();
-            ctx.translate(plotOffset.left, plotOffset.top);
-            ctx.lineJoin = "round";
+            c.save();
+            c.translate(plotOffset.left, plotOffset.top);
+            c.lineJoin = "round";
 
             var lw = series.lines.lineWidth,
                 sw = series.shadowSize;
             // FIXME: consider another form of shadow when filling is turned on
             if (lw > 0 && sw > 0) {
                 // draw shadow as a thick and thin line with transparency
-                ctx.lineWidth = sw;
-                ctx.strokeStyle = "rgba(0,0,0,0.1)";
+                c.lineWidth = sw;
+                c.strokeStyle = "rgba(0,0,0,0.1)";
                 // position shadow at angle from the mid of line
                 var angle = Math.PI/18;
                 plotLine(series.datapoints, Math.sin(angle) * (lw/2 + sw/2), Math.cos(angle) * (lw/2 + sw/2), series.xaxis, series.yaxis);
-                ctx.lineWidth = sw/2;
+                c.lineWidth = sw/2;
                 plotLine(series.datapoints, Math.sin(angle) * (lw/2 + sw/4), Math.cos(angle) * (lw/2 + sw/4), series.xaxis, series.yaxis);
             }
 
-            ctx.lineWidth = lw;
-            ctx.strokeStyle = series.color;
+            c.lineWidth = lw;
+            c.strokeStyle = series.color;
             var fillStyle = getFillStyle(series.lines, series.color, 0, plotHeight);
             if (fillStyle) {
-                ctx.fillStyle = fillStyle;
+                c.fillStyle = fillStyle;
                 plotLineArea(series.datapoints, series.xaxis, series.yaxis);
             }
 
             if (lw > 0)
                 plotLine(series.datapoints, 0, 0, series.xaxis, series.yaxis);
-            ctx.restore();
+            c.restore();
         }
 
         function drawSeriesPoints(series) {
@@ -2456,6 +2456,10 @@
         
         var highlights = [],
             redrawTimeout = null;
+
+        function lineMagnitude(x1,y1,x2,y2) {
+            return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+        }
         
         // returns the data item the mouse is over, or null if none is found
         function findNearbyItems(mouseX, mouseY, seriesFilter) {
@@ -2478,7 +2482,7 @@
                     maxx = maxDistance / axisx.scale,
                     maxy = maxDistance / axisy.scale;
 
-                if (s.lines.show || s.points.show) {
+                if (s.points.show) {
                     for (j = 0; j < points.length; j += ps) {
                         var x = points[j], y = points[j + 1];
                         if (x == null)
@@ -2507,7 +2511,52 @@
                         }
                     }
                 }
-                    
+
+                if (s.lines.show && !item) {
+                    for (j = ps; j < points.length; j += ps) {
+                        var x1 = points[j-2], y1 = points[j - 1],
+                            x2 = points[j],   y2 = points[j + 1];
+                        if (x1 == null || x2 == null)
+                            continue;
+                        x1 = axisx.p2c(x1),x2 = axisx.p2c(x2),
+                        y1 = axisy.p2c(y1),y2 = axisy.p2c(y2);
+                            
+                        var mag = lineMagnitude(x1,y1,x2,y2);
+                        if (mag < 0.00000001)//danger of divide by zero in u 
+                            continue;
+                        var ix,iy;//intersecting point
+                        var u = (mouseX - x1)*(x2 - x1) + (mouseY - y1)*(y2 - y1);
+                        u = u / (mag * mag);
+                        var dist;
+
+                        if (u < 0.00001 || u > 1) {
+                            ix = lineMagnitude(mouseX, mouseY, x1, y1);
+                            iy = lineMagnitude(mouseX, mouseY, x2, y2);
+                            if (ix > iy)
+                                dist = iy;
+                            else
+                                dist = ix;
+                        } else {
+                            ix = x1 + u * (x2 - x1);
+                            iy = y1 + u * (y2 - y1);
+                            dist = lineMagnitude(mouseX, mouseY, ix, iy);
+                        }
+                        
+                        if (dist > maxDistance)
+                            continue;
+
+                        var nearItem = [i, j / ps];
+                        nearbyItems.push(nearItem);
+
+                        // use <= to ensure last point takes precedence
+                        // (last generally means on top of)
+                        if (dist < smallestDistance) {
+                            smallestDistance = dist;
+                            item = nearItem;
+                        }
+                    }
+                }
+
                 if (s.bars.show && !item) { // no other point can be nearby
                     var barLeft = s.bars.barLeft,
                         barRight = barLeft + s.bars.barWidth;
@@ -2609,6 +2658,7 @@
                           h.point[0] == item.datapoint[0] &&
                           h.point[1] == item.datapoint[1]))
                         unhighlight(h.series, h.point);
+                    
                 }
                 
                 if (item)
@@ -2637,7 +2687,12 @@
 
                 if (hi.series.bars.show)
                     drawBarHighlight(hi.series, hi.point);
-                else
+                else if (hi.series.lines.show) {
+                    octx.restore();
+                    drawLineHighlight(hi.series, hi.point);
+                    octx.save();
+                    octx.translate(plotOffset.left, plotOffset.top);
+                } else
                     drawPointHighlight(hi.series, hi.point);
             }
             octx.restore();
@@ -2716,6 +2771,17 @@
                 series.points.symbol(octx, x, y, radius, false);
             octx.closePath();
             octx.stroke();
+        }
+
+        function drawLineHighlight(series) { 
+            var tmpW=series.lines.lineWidth,tmpC = series.color,tmpSZ = series.shadowSize;
+            series.lines.lineWidth=tmpW*2 + 1;
+            series.color = $.color.parse(tmpC).scale('a', 0.5).toString();
+            series.shadowSize = 0;
+            drawSeriesLines(series,octx);
+            series.lines.lineWidth=tmpW;
+            series.color = tmpC;
+            series.shadowSize = tmpSZ;
         }
 
         function drawBarHighlight(series, point) {
