@@ -56,14 +56,17 @@ $(function () {
     }
 
     var previousPoint = null;
+    var previousSeries = null;
     $("#placeholder").bind("plothover", function (event, pos, item) {
         $("#x").text(pos.x.toFixed(2));
         $("#y").text(pos.y.toFixed(2));
 
         if ($("#enableTooltip:checked").length > 0) {
             if (item) {
-                if (previousPoint != item.dataIndex) {
+                if (previousPoint != item.dataIndex ||
+                    previousSeries != item.seriesIndex) {
                     previousPoint = item.dataIndex;
+                    previousSeries = item.seriesIndex;
                     
                     $("#tooltip").remove();
                     var x = item.datapoint[0].toFixed(2),
@@ -76,6 +79,7 @@ $(function () {
             else {
                 $("#tooltip").remove();
                 previousPoint = null;            
+                previousSeries = null;            
             }
         }
     });
